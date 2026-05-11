@@ -1,33 +1,21 @@
-import Versions from './components/Versions'
-import electronLogo from './assets/electron.svg'
-
+import { GiHamburgerMenu } from "react-icons/gi";
 function App(): React.JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
+
 
   return (
     <>
-      <img alt="logo" className="logo" src={electronLogo} />
-      <div className="creator">Powered by electron-vite</div>
-      <div className="text">
-        Build an Electron app with <span className="react">React</span>
-        &nbsp;and <span className="ts">TypeScript</span>
-      </div>
-      <p className="tip">
-        Please try pressing <code>F12</code> to open the devTool
-      </p>
-      <div className="actions">
-        <div className="action">
-          <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-            Documentation
-          </a>
-        </div>
-        <div className="action">
-          <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-            Send IPC
-          </a>
-        </div>
-      </div>
-      <Versions></Versions>
+      <main className="flex h-screen w-screen items-center justify-start relative bg-white">
+          <nav className="absolute top-0 left-0 w-full p-4 border-b border-gray-300 flex items-center gap-4">
+            <button className="p-1 rounded-md hover:bg-gray-200 hover:size-7 hover:text-size-5 z-20">
+              <GiHamburgerMenu className="text-black size-5" />
+            </button>
+            <h1 className="text-xl font-bold text-black"> SheetDesk</h1>
+          </nav>
+          <div className="flex absolute w-70 left-20 h-screen z-10 pt-16 bg-gray-800 flex-col items-center gap-4">
+            <h2 className="text-2xl font-bold text-gray-500">Welcome to SheetDesk</h2>
+            <p className="text-gray-600">Your spreadsheet management tool</p>
+          </div>
+      </main>           
     </>
   )
 }
