@@ -1,12 +1,19 @@
 import React from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 
-import DashboardPage from "./pages/DashboardPage";
+//import DashboardPage from "./pages/DashboardPage";
 import ExperimentalSheet from "./pages/ExperimentalSheet";
+
+import "./index.css"
+import {openExcel} from "./services/excel.ts"
 
 function App(): React.JSX.Element {
 
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  
+  const handleOpenExcel = async () => {
+    
+  };
 
   return (
     <>
@@ -23,7 +30,9 @@ function App(): React.JSX.Element {
             <div className="flex flex-col items-start gap-3 mt-4 w-full">
               <button className="text-gray-300 hover:bg-gray-600 w-full h-12">Dashboard</button>
               <button className="text-gray-300 hover:bg-gray-600 w-full h-12">Spreadsheets</button>
-              <button className="text-gray-300 hover:bg-gray-600 w-full h-12">Settings</button>
+              <button className="text-gray-300 hover:bg-gray-600 w-full h-12" onClick={() => handleOpenExcel()}>
+                Settings
+              </button>
             </div>
           </nav>
           <div className="flex-1 h-full w-full p-8">
