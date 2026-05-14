@@ -1,18 +1,29 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 
 //import DashboardPage from "./pages/DashboardPage";
 import ExperimentalSheet from "./pages/ExperimentalSheet";
 
 import "./index.css"
-import {openExcel} from "./services/excel.ts"
+import { openExcel } from "./services/excel"
 
 function App(): React.JSX.Element {
 
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-  
+  const excelFilePath = localStorage.getItem("excelFilePath");
+
+  useEffect(() => {
+    if (excelFilePath) {
+      console.log("Excel file path from localStorage:", excelFilePath);
+    }
+  }, [excelFilePath]);
   const handleOpenExcel = async () => {
-    
+    if (!excelFilePath) {
+      const filePath = await openExcel();
+      console.log("Selected Excel file path:", filePath);
+    } else {
+      window.api.readExcel(excelFilePath);
+    }
   };
 
   return (

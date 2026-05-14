@@ -3,10 +3,9 @@
 export async function openExcel(): Promise<string | null> {
     try {
         const filePath = await window.api.openExcel();
+        localStorage.setItem("excelFilePath", String(filePath) || '');
 
-        localStorage.setItem("excelFilePath", filePath[0] || '');
-
-        return filePath[0] || null;
+        return String(filePath) || null;
     } catch (error) {
         console.error("Error opening Excel file:", error);
         return null;

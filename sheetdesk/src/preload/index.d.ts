@@ -4,7 +4,8 @@ declare global {
   interface Window {
     electron: ElectronAPI 
     api: {
-      openExcel: () => Promise<string[]>
+      openExcel: () => Promise<string[]>,
+      readExcel: (filePath: string) => Promise<void>
     }
   }
 }
