@@ -1,30 +1,33 @@
 import React, { useEffect } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 
-//import DashboardPage from "./pages/DashboardPage";
+// Importando as páginas
+import DashboardPage from "./pages/DashboardPage";
 import ExperimentalSheet from "./pages/ExperimentalSheet";
+import Configuration from "./pages/Configuration";
 
+// Importando estilos
 import "./index.css"
-import { openExcel } from "./services/excel"
+
 
 function App(): React.JSX.Element {
 
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const excelFilePath = localStorage.getItem("excelFilePath");
+  const [screenSelected, setScreenSelected] = React.useState("dashboard");
+
 
   useEffect(() => {
     if (excelFilePath) {
       console.log("Excel file path from localStorage:", excelFilePath);
     }
   }, [excelFilePath]);
-  const handleOpenExcel = async () => {
-    if (!excelFilePath) {
-      const filePath = await openExcel();
-      console.log("Selected Excel file path:", filePath);
-    } else {
-      window.api.readExcel(excelFilePath);
-    }
-  };
+  
+  
+
+  const handleScreenSelect = (screen: string) => {
+    setScreenSelected(screen);
+  }
 
   return (
     <>
@@ -39,15 +42,21 @@ function App(): React.JSX.Element {
             <h2 className="text-2xl font-bold text-gray-500">Welcome to SheetDesk</h2>
             <p className="text-gray-600">Your spreadsheet management tool</p>
             <div className="flex flex-col items-start gap-3 mt-4 w-full">
-              <button className="text-gray-300 hover:bg-gray-600 w-full h-12">Dashboard</button>
-              <button className="text-gray-300 hover:bg-gray-600 w-full h-12">Spreadsheets</button>
-              <button className="text-gray-300 hover:bg-gray-600 w-full h-12" onClick={() => handleOpenExcel()}>
+              <button className="text-gray-300 hover:bg-gray-600 w-full h-12" onClick={() => handleScreenSelect("dashboard")}>
+                Dashboard
+              </button>
+              <button className="text-gray-300 hover:bg-gray-600 w-full h-12" onClick={() => handleScreenSelect("spreadsheets")}>
+                Spreadsheets
+              </button>
+              <button className="text-gray-300 hover:bg-gray-600 w-full h-12" onClick={() => handleScreenSelect("settings")}>
                 Settings
               </button>
             </div>
           </nav>
           <div className="flex-1 h-full w-full p-8">
-            <ExperimentalSheet />
+            {screenSelected === "dashboard" && <DashboardPage />}
+            {screenSelected === "spreadsheets" && <ExperimentalSheet />}
+            {screenSelected === "settings" && <Configuration />}
           </div>
       </main>           
     </>
