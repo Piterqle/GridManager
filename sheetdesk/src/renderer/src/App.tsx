@@ -23,7 +23,19 @@ function App(): React.JSX.Element {
     }
   }, [excelFilePath]);
   
-  
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsSidebarOpen((prev) => !prev);
+      }
+    };
+    
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    }
+    
+  }, []);
 
   const handleScreenSelect = (screen: string) => {
     setScreenSelected(screen);
@@ -31,14 +43,14 @@ function App(): React.JSX.Element {
 
   return (
     <>
-      <main className="flex h-screen w-screen flex-col items-center justify-start relative bg-white">
+      <main className="flex h-screen w-full flex-col items-center justify-start relative bg-white">
           <header className="top-0 left-0 w-full p-4 border-b border-gray-300 flex items-center gap-4">
             <button className="p-1 rounded-md hover:bg-gray-200 hover:size-7 hover:text-size-5 z-20" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
               <GiHamburgerMenu className="text-black size-5" />
             </button>
             <h1 className="text-xl font-bold text-black"> SheetDesk</h1>
           </header>
-          <nav className={`flex absolute w-70 top-0 left-0 h-screen z-10 pt-16 px-5 bg-gray-800 flex-col items-center gap-4 border-r-2 rounded-r-md border-gray-300 ${isSidebarOpen ? 'transform translate-x-0' : 'transform translate-x-[-100%]'} transition-transform duration-300`}>
+          <nav className={`flex absolute w-70 top-0 left-0 h-full z-10 pt-16 px-5 bg-gray-800 flex-col items-center gap-4 border-r-2 rounded-r-md border-gray-300 ${isSidebarOpen ? 'transform translate-x-0' : 'transform translate-x-[-100%]'} transition-transform duration-300`}>
             <h2 className="text-2xl font-bold text-gray-500">Welcome to SheetDesk</h2>
             <p className="text-gray-600">Your spreadsheet management tool</p>
             <div className="flex flex-col items-start gap-3 mt-4 w-full">
@@ -53,7 +65,7 @@ function App(): React.JSX.Element {
               </button>
             </div>
           </nav>
-          <div className="flex-1 h-full w-full p-8">
+          <div className="flex w-full pt-5 px-8">
             {screenSelected === "dashboard" && <DashboardPage />}
             {screenSelected === "spreadsheets" && <ExperimentalSheet />}
             {screenSelected === "settings" && <Configuration />}

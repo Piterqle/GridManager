@@ -1,6 +1,8 @@
 import { ipcMain, dialog } from "electron";
 import * as xlsx from "xlsx";
 import Aluno  from "../models/alunoClass"
+import { is } from "@electron-toolkit/utils";
+import { isDate } from "util/types";
 
 ipcMain.handle("open-excel", async () => {
     const result = await dialog.showOpenDialog({
@@ -20,7 +22,6 @@ ipcMain.handle("read-excel", async (_, filePath: string) => {
     try {
         const cabecalhoEsperado = ["Nome", "Data da Procura", "Data de Experiência", "Semana", "Horário", "Contato", "Status"];
         const workbook = xlsx.readFile(filePath);
-        console.log(`Workbook loaded: ${workbook.SheetNames.length} sheets found.`);
         const alunos: Aluno[] = [];
         for (const sheetName of workbook.SheetNames) {
             const worksheet = workbook.Sheets[sheetName];
@@ -28,7 +29,6 @@ ipcMain.handle("read-excel", async (_, filePath: string) => {
            
             
             if (!jsonData || JSON.stringify(jsonData[0]) !== JSON.stringify(cabecalhoEsperado)) {
-                console.warn(`Sheet "${sheetName}" skipped: header does not match expected format.`);
                 continue;
             }
             
@@ -36,7 +36,7 @@ ipcMain.handle("read-excel", async (_, filePath: string) => {
             alunos.push(...jsonData.slice(1).map((row: any[]) => ({
                 nome: row[0] || "",
                 modalidade: sheetName || "",
-                data_procura: row[1] || "",
+                data_procura: row[1]  || "",
                 data_inicio: row[2] || "",
                 semana: row[3] || "",
                 horario: row[4] || "",
