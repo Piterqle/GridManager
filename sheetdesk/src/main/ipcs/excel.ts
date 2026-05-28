@@ -18,7 +18,7 @@ ipcMain.handle("open-excel", async () => {
   return result.filePaths[0] || null; 
   });
 
-ipcMain.handle("read-excel", async (_, filePath: string) => {
+ipcMain.handle("read-excel", async (_, filePath: string, tipoReturn: string, modalidade: string = "All") => {
     try {
         const cabecalhoEsperado = ["Nome", "Data da Procura", "Data de Experiência", "Semana", "Horário", "Contato", "Status"];
         const workbook = xlsx.readFile(filePath);
@@ -27,7 +27,14 @@ ipcMain.handle("read-excel", async (_, filePath: string) => {
             const worksheet = workbook.Sheets[sheetName];
             const jsonData: any[][] = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
            
+
+            if (tipoReturn === "Sheet"){
+              return workbook.SheetNames;            
+            }
             
+            if (modalidade !== "All" && sheetName !== modalidade) {
+                continue;
+            }
             if (!jsonData || JSON.stringify(jsonData[0]) !== JSON.stringify(cabecalhoEsperado)) {
                 continue;
             }
@@ -44,7 +51,7 @@ ipcMain.handle("read-excel", async (_, filePath: string) => {
                 status: row[6] || ""
             })));
           }
-          return alunos;
+        return alunos;
       } catch (error) {
         console.error("Error reading Excel file:", error);
         return [];

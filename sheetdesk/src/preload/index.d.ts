@@ -6,7 +6,7 @@ declare global {
     electron: ElectronAPI 
     api: {
       openExcel: () => Promise<string[]>,
-      readExcel: (filePath: string) => Promise<Aluno[]>
+      readExcel: (filePath: string, tipoReturn: string, modalidade: string) => Promise<Aluno[]>
     }
   }
 }

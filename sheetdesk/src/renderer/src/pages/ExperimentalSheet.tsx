@@ -8,27 +8,65 @@ import { FaSearch } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaRegClock } from "react-icons/fa";
 import { BsTelephone } from "react-icons/bs";
+import { FaFilter } from "react-icons/fa";
 
 function ExperimentalSheet(): React.JSX.Element {
 
+    // Estado do dropdown de modalidades
+    const [listDropdow, setListDrop] = useState<any[]>([]);
+    const [selectedModalidade, setSelectedModalidade] = useState<string>("");
 
+    // Arquvio do Excel armazenado no localStorage
     const filePath = localStorage.getItem("excelFilePath");
 
+
     const [alunosDados, setAlunosDados] = useState<any[]>([]);
+    
     useEffect(() => {
-        const fetchAlunos = async () => {
-            if (filePath) {
-                console.log("Excel file path from localStorage:", filePath);
+        const fetchSheets = async () => {
+
+            readExcel(filePath || '', "Sheet", "All").then((sheets) => {
+                const modalidades: any[] = [];
+                for (const sheet of sheets) {
+                    const sheetName = sheet[0] + sheet.slice(1).toLowerCase();
+                  modalidades.push(sheetName);
+                }
+                setListDrop(modalidades);
+            }) };
+            fetchSheets();
+        }, [filePath]);
+        
+    const fetchAlunos = async (modalidade: string) => {
+
+        if (!filePath) {
+            console.error("No Excel file path found in localStorage.");
+            return [];
+        }
+
+        console.log("Fetching alunos with modalidade:", modalidade);
+
+        if (modalidade.trim() === "" && selectedModalidade) 
+            {
+                modalidade = selectedModalidade.toUpperCase();
+                console.log("Modalidade was empty, using selectedModalidade:", modalidade);
+                console.log(modalidade);
             }
+        const data = await readExcel(filePath || '', "alunos", modalidade.toUpperCase() || "All");
+        return data;
+    }
+    
+    useEffect(() => {
+        console.log("Selected modalidade changed:", selectedModalidade);
+        fetchAlunos(selectedModalidade).then((data) => {
+            setAlunosDados(data);
+        });
             const alunos = setInterval(async () => {
-                const data = await readExcel(filePath || '');
-                setAlunosDados(data);
+                console.log("Atualizando dados dos alunos...");
+                setAlunosDados(await fetchAlunos(selectedModalidade.toUpperCase()));
             }, 30000); // Atualiza a cada 1 minutos
 
             return () => clearInterval(alunos);
-        }
-        fetchAlunos();
-    }, [filePath]);
+    }, [filePath, selectedModalidade]);
         
         
         const [paginaAtual, setPaginaAtual] = useState(1);
@@ -43,14 +81,33 @@ function ExperimentalSheet(): React.JSX.Element {
         const totalPaginas = Math.ceil(alunosDados.length / intensPaginacao);
 
     return (
-        <article className="flex flex-col p-1 pt-0 justify-center h-full w-full">
+        
+        <article className="flex flex-col p-1 relative pt-0 justify-center h-full w-full">
             <h1 className="text-3xl font-bold text-gray-700">Alunos Experimentais</h1>
             <p className="text-gray-500 mt-2">Esta é uma tabela com as informações dos alunos experimentais.</p>
             <section className="flex flex-col p-2  w-full h-auto border border-gray-300 rounded-xl mt-5 shadow-lg items-start gap-4">
-                <div className="flex flex-col items-start justify-start w-full">
-                    <div className="flex items-center gap-2 w-full relative">
+                <div className="flex flex-row items-start justify-between w-full px-4">
+                    <div className="flex items-center gap-2 w-1/3 relative mt-1">
                         <FaSearch className="absolute ml-3 my-2 text-gray-500" />
-                        <input type="text" placeholder="Pesquisar..." className="flex-1 pl-10 border w-full border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 " />
+                        <input type="text" placeholder="Pesquisar..." className="flex-1 pl-10 border h-[40px] border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 " />
+                    </div>
+                    <div className="flex items-center gap-2 mt-1"> 
+                        <select className="border h-[40px] w-110 border-gray-300 rounded-md px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 " value={selectedModalidade} onChange={async (e) => {
+                            setSelectedModalidade(e.target.value);
+                            await fetchAlunos(e.target.value).then((data) => { setAlunosDados(data); }
+                            )}}>                        
+                            
+                            <option value="">Todas as modalidades</option>
+                            {listDropdow.map((modalidade, index) => (
+                                <option key={index} value={modalidade}>
+                                    {modalidade}
+                                </option>
+                            ))}
+                        </select>
+                        <button className="px-3 py-1 rounded-md border h-[40px] border-gray-300 bg-white hover:bg-gray-200">
+                            <FaFilter className="text-gray-500 size-4" />
+                        </button>
+                    
                     </div>
                 </div>
                 <div className="rounded-xl overflow-auto w-full border max-h-[55vh] border-gray-300">
@@ -85,11 +142,18 @@ function ExperimentalSheet(): React.JSX.Element {
                         <tbody className="">
                             
                         {
-                                    alunosPagina.map((aluno, index) => (
-                                        <tr className="hover:bg-gray-50" key={index}>
-                                            <td className="border-b border-gray-200 p-3 truncate overflow-hidden whitespace-nowrap">
-                                                {aluno.nome}
-                                            </td>
+                            alunosPagina.length === 0 ? (
+                                <tr>
+                                    <td colSpan={8} className="text-center p-4 text-gray-500">
+                                        Nenhum aluno encontrado.
+                                    </td>
+                                </tr>
+                            ) : (
+                                alunosPagina.map((aluno, index) => (
+                                    <tr className="hover:bg-gray-50" key={index}>
+                                        <td className="border-b border-gray-200 p-3 truncate overflow-hidden whitespace-nowrap">
+                                            {aluno.nome}
+                                        </td>
                                             <td className="border-b border-gray-200 p-3 truncate overflow-hidden whitespace-nowrap">
                                                 <p className="px-2 py-1 rounded-md text-[12px] font-medium w-fit text-blue-900 bg-blue-300">
                                                     {aluno.modalidade}
@@ -126,7 +190,7 @@ function ExperimentalSheet(): React.JSX.Element {
                                             </td>
                                         </tr>
                                     ))
-                                }
+                                )}
                             
                         </tbody>
 

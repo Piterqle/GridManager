@@ -12,9 +12,9 @@ export async function openExcel(): Promise<string | null> {
     }
 }  
 
-export async function readExcel(filePath: string): Promise<any[]> {
+export async function readExcel(filePath: string, tipoReturn: string, modalidade: string = "All"): Promise<any[]> {
     try {
-        const alunos = await window.api.readExcel(filePath);
+        const alunos = await window.api.readExcel(filePath, tipoReturn, modalidade);
         return alunos;
     } catch (error) {
         console.error("Error reading Excel file:", error);
