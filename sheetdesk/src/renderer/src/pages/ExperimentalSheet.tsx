@@ -87,9 +87,11 @@ function ExperimentalSheet(): React.JSX.Element {
         <article className="flex flex-col p-1 relative pt-0  h-full w-full">
             { 
                (isModalOpen) &&
-                <section className="fixed inset-0 scale-110 rounded-xl bg-tranparent z-30">
-                    <div className="w-full h-full blur-3xl opacity-50 bg-gradient-to-br from-gray-100 to-gray-300"/>
-                    
+                <section className="fixed inset-0 scale-110 rounded-xl bg-tranparent z-30 ">
+                    <div className="w-full h-full blur-3xl opacity-50  bg-black"/>
+                    <div className="flex items-center justify-center w-full h-full absolute top-0 left-0">
+                        <ModalAdicionar open={isModalOpen} onClose={() => setIsModalOpen(false)} Aluno={[]} />
+                    </div>
                 </section> 
             }
             <section className="flex flex-row w-full h-auto mt-2">
@@ -98,7 +100,7 @@ function ExperimentalSheet(): React.JSX.Element {
                     <p className="text-gray-500 ">Esta é uma tabela com as informações dos alunos experimentais.</p>
                 </div>
                 <div className="flex items-end gap-2 ml-auto">
-                    <button  className="ml-auto px-4 py-2 rounded-md border h-[40px] text-center border-gray-300 bg-gradient-to-r from-pink-400 to-purple-800 text-white hover:from-pink-500 hover:to-purple-900 flex items-center gap-2">
+                    <button onClick={() => setIsModalOpen(true)} className="ml-auto px-4 py-2 rounded-md border h-[40px] text-center border-gray-300 bg-gradient-to-r from-pink-400 to-purple-800 text-white hover:from-pink-500 hover:to-purple-900 flex items-center gap-2">
                         <FaUserPlus className="" />
                         <p className="text-sm font-medium">Adicionar Aluno</p>
                     </button>
