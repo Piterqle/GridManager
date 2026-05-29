@@ -1,8 +1,6 @@
 import { ipcMain, dialog } from "electron";
 import * as xlsx from "xlsx";
 import Aluno  from "../models/alunoClass"
-import { is } from "@electron-toolkit/utils";
-import { isDate } from "util/types";
 
 ipcMain.handle("open-excel", async () => {
     const result = await dialog.showOpenDialog({
@@ -39,14 +37,16 @@ ipcMain.handle("read-excel", async (_, filePath: string, tipoReturn: string, mod
                 continue;
             }
             
-          
-            alunos.push(...jsonData.slice(1).map((row: any[]) => ({
+            
+            alunos.push(...jsonData.slice(1).map((row: any[]) => (
+              {
+                
                 nome: row[0] || "",
                 modalidade: sheetName || "",
-                data_procura: row[1]  || "",
-                data_inicio: row[2] || "",
+                data_procura:  transformExcelDate(row[1]) == "Invalid Date" ? row[1] : transformExcelDate(row[1]) || "",
+                data_inicio: transformExcelDate(row[2]) == "Invalid Date" ? row[2] : transformExcelDate(row[2]) || "",
                 semana: row[3] || "",
-                horario: row[4] || "",
+                horario: transformHours(row[4]) == "NaN:NaN" ? row[4] : transformHours(row[4]) || "--:--",
                 contato: row[5] || "",
                 status: row[6] || ""
             })));
@@ -57,3 +57,24 @@ ipcMain.handle("read-excel", async (_, filePath: string, tipoReturn: string, mod
         return [];
       }
     });
+
+
+function transformExcelDate(excelDate: number): string {
+  try {
+    const date = new Date((excelDate - (25567 + 2)) * 86400 * 1000);
+    return date.toLocaleDateString("pt-BR");
+    
+  } catch (error) {
+    console.error("Error transforming Excel date:", error);
+    return "Invalid Date";
+  }
+}
+
+
+function transformHours(hours: number): string {
+  
+  const totalMinutes = Math.round(hours * 24 * 60);
+  const hoursInt = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return `${String(hoursInt).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+}
