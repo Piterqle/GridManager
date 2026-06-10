@@ -1,7 +1,7 @@
 // Import React and necessary hooks
 import { useEffect, useState } from "react";
-import { readExcel } from "@renderer/services/excel";
-import ModalAdicionar from "@renderer/components/ModalAdicionar";
+import { readExcel } from "@renderer/domain/services/excel";
+import ModalAdicionar from "@renderer/presentation/components/ModalAdicionar";
 
 
 // Importing icons
@@ -11,6 +11,7 @@ import { BsThreeDotsVertical, BsTelephone } from "react-icons/bs";
 
 function ExperimentalSheet(): React.JSX.Element {
 
+    
     // Estado do dropdown de modalidades
     const [listDropdow, setListDrop] = useState<any[]>([]);
     const [selectedModalidade, setSelectedModalidade] = useState<string>("");
@@ -90,7 +91,7 @@ function ExperimentalSheet(): React.JSX.Element {
                 <section className="fixed inset-0 scale-110 rounded-xl bg-tranparent z-30 ">
                     <div className="w-full h-full blur-3xl opacity-50  bg-black"/>
                     <div className="flex items-center justify-center w-full h-full absolute top-0 left-0">
-                        <ModalAdicionar open={isModalOpen} onClose={() => setIsModalOpen(false)} Aluno={[]} />
+                        <ModalAdicionar open={isModalOpen} onClose={() => setIsModalOpen(false)} Aluno={[]} modalidades={listDropdow} />
                     </div>
                 </section> 
             }
@@ -134,7 +135,7 @@ function ExperimentalSheet(): React.JSX.Element {
                 </div>
                 <div className="rounded-xl  overflow-auto w-full border max-h-[55vh] border-gray-300">
                     <table className="w-full table-fixed">
-                        <thead className="bg-gray-200 text-sm">
+                        <thead className="bg-gray-200 text-sm sticky top-0">
                             <tr>
                                 <th className="w-55 border-b border-gray-400 p-3 text-left">
                                     Nome

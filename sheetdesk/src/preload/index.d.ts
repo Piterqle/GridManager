@@ -1,5 +1,5 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import Aluno from '../main/models/alunoClass'
+import Aluno from '../renderer/src/domain/entidades/alunoClass'
 
 declare global {
   interface Window {

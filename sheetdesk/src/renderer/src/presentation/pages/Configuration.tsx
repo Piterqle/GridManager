@@ -1,4 +1,4 @@
-import { openExcel } from "../services/excel";
+import { openExcel } from "../../domain/services/excel";
 
 
 function Configuration(): React.JSX.Element {
@@ -9,8 +9,7 @@ function Configuration(): React.JSX.Element {
             const filePath = await openExcel();
             console.log("Selected Excel file path:", filePath);
         } else {
-            const alunos = await window.api.readExcel(excelFilePath);
-            console.log("Alunos found:", alunos);
+            console.log("Excel file path from localStorage:", excelFilePath);
         }
     };
   ;

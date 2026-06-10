@@ -1,6 +1,6 @@
 import { ipcMain, dialog } from "electron";
 import * as xlsx from "xlsx";
-import Aluno  from "../models/alunoClass"
+import Aluno  from "../../renderer/src/domain/entidades/alunoClass"
 
 ipcMain.handle("open-excel", async () => {
     const result = await dialog.showOpenDialog({

@@ -3,9 +3,9 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { FaGear } from "react-icons/fa6";
 
 // Importando as páginas
-import DashboardPage from "./pages/DashboardPage";
-import ExperimentalSheet from "./pages/ExperimentalSheet";
-import Configuration from "./pages/Configuration";
+import DashboardPage from "./presentation/pages/DashboardPage";
+import ExperimentalSheet from "./presentation/pages/ExperimentalSheet";
+import Configuration from "./presentation/pages/Configuration";
 
 // Importando estilos
 import "./index.css"
@@ -26,7 +26,7 @@ function App(): React.JSX.Element {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+      if (event.key === "Control") {
         setIsSidebarOpen((prev) => !prev);
       }
     };
