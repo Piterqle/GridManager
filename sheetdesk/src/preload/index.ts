@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import Aluno from '../renderer/src/domain/entidades/alunoClass'
 
 // Custom APIs for renderer
 const api = {}
@@ -16,6 +17,9 @@ if (process.contextIsolated) {
         },
         readExcel: (filePath: string, tipoReturn: string, modalidade: string = "All") => {
           return ipcRenderer.invoke("read-excel", filePath, tipoReturn, modalidade)
+        },
+        addExcel: (filePath: string, Aluno: Aluno) => {
+          return ipcRenderer.invoke("add-excel", filePath, Aluno)
         }
       })
 
