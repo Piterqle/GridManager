@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 
+import {alunoController, formatDate} from "@renderer/shared/container";
 
 const listStatus = ['Matriculado', 'Cancelado', 'Pendente', 'Em Andamento']
 
@@ -20,15 +21,25 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
         }
     }, []);
 
-    const [dataProcura, setDataProcura] = useState("");
+
+    const [form, setForm] = useState({
+        nome: "", 
+        modalidade: "Ballet", 
+        data_procura: "",
+        data_experiencia: "",
+        semana: "Domingo",
+        horario: "",
+        contato: "",
+        status: "Matriculado"
+    })
 
     const inFocus = (e: React.FocusEvent<HTMLInputElement>) => {
         if (e.target.id === "nome" && e.target.value != "") {
-            setDataProcura(new Date().toISOString().split("T")[0]);
-            console.log("Data da procura definida para:", dataProcura);
+            setForm({ ...form, data_procura: (new Date().toISOString().split("T")[0])});
+            
             return;
         }
-        setDataProcura('')
+        setForm({...form , data_procura: "" })
     }
 
     const formartnumber = (e: React.InputEvent<HTMLInputElement>) => {
@@ -39,6 +50,32 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
             .replace(/(\d{5})(\d)/, "$1-$2")
         
         e.currentTarget.value = valor;
+    }
+
+    const onReady = () => {
+        const pussuirValorVazio = Object.values(form).some(valor => valor.trim() === "")
+        if(pussuirValorVazio)
+            {
+                alert("Preencha os campos")
+                return
+            }
+
+        if (form.data_procura > form.data_experiencia){
+            alert("Data da Procura é antes da Experiência")
+            return
+        }
+
+        const data_procura = formatDate(form.data_procura)
+        setForm({...form, data_procura: data_procura})
+
+        const data_experiencia = formatDate(form.data_experiencia)
+        setForm({...form, data_experiencia: data_experiencia})
+        
+        const semana = new Date(form.data_experiencia).toLocaleDateString('pt-BR',{weekday: 'long'})
+        setForm({...form, semana: semana})
+
+
+        alunoController.adicionar(form)
     }
 
     return (
@@ -55,15 +92,15 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="nome">
                         Nome Completo
                     </label>
-                    <input type="text" id="nome" onBlur={inFocus} className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                    <input type="text" id="nome" value={form.nome} onChange={(e) => {setForm({...form, nome: e.target.value})}} onBlur={inFocus} className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
 
                 <div className="mb-4 w-full flex flex-row">
                     <div className="mb-4 w-full">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dataProcura">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="data_procura">
                             Modalidade
                         </label>
-                        <select id="dataProcura" className="shadow-md border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline select " >
+                        <select id="data_procura" onChange={(e) => setForm({...form, modalidade: e.target.value})} className="shadow-md border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline select " >
 
                             {modalidades.map((modalidade, index) => (
                                 <option key={index} value={modalidade} className="text-gray-700">
@@ -76,7 +113,7 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dataInicio">
                             Status
                         </label>
-                        <select id="dataInicio" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline select" > 
+                        <select id="dataInicio" onChange={(e) => setForm({...form, status: e.target.value})} className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline select" > 
 
                             {
                                 listStatus.map((status, index) => (
@@ -93,35 +130,35 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
 
                 <div className="mb-4 w-full flex flex-row">
                     <div className="mb-4 w-full">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dataProcura">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="data_procura">
                             Contato
                         </label>
-                        <input type="text" onInput={(e) => {formartnumber(e)}} placeholder="(xx) xxxxx-xxxx" id="dataProcura" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                        <input type="text" value={form.contato} onInput={(e) => {formartnumber(e)}} onChange={(e) => setForm({...form, contato: e.target.value})} placeholder="(xx) xxxxx-xxxx" id="data_procura" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                     </div>
                     <div className="mb-4 ml-4 w-full">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dataInicio">
                             Horário
                         </label>
-                        <input id="dataInicio" type="time" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                        <input id="dataInicio" type="time" value={form.horario} onChange={(e) => setForm({...form, horario: e.target.value})} className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                     </div>
                 </div>
 
                 <div className="mb-4 flex flex-row w-full">
                     <div className="mb-4 w-full">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dataProcura">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="data_procura">
                             Data da Procura
                         </label>
-                        <input type="date" value={dataProcura} onChange={(e) => setDataProcura(e.target.value)} id="dataProcura" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                        <input type="date" value={form.data_procura} onChange={(e) => setForm({...form, data_procura: e.target.value})}  id="data_procura" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                     </div>
                     <div className="mb-4 ml-4 w-full">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dataInicio">
-                            Data de Início
+                            Data da Experiencia
                         </label>
-                        <input type="date" id="dataInicio" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                        <input type="date" value={form.data_experiencia} onChange={(e) => setForm({...form, data_experiencia: e.target.value})} id="dataInicio" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                     </div>
                 </div>
                 <div className="flex justify-end">
-                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    <button type="button" onClick={() => onReady()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Adicionar
                     </button>
                 </div>

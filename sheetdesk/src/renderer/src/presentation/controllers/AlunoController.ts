@@ -3,27 +3,27 @@ import LerAlunoUseCase from "@renderer/aplication/casoDeUso/LerAlunoUseCase";
 
 
 class AlunoController {
-    constructor(
-        private adicionarAlunoUseCase : AdicionarAlunoUseCase,
-        private lerAlunoUseCase: LerAlunoUseCase,
-    ){}
+        constructor(
+            private adicionarAlunoUseCase : AdicionarAlunoUseCase,
+            private lerAlunoUseCase: LerAlunoUseCase,
+        ){}
 
     async lerDados(tipoReturn: string, modalidade: string) {
-        await this.lerAlunoUseCase.execute(tipoReturn, modalidade)
+        return await this.lerAlunoUseCase.execute(tipoReturn, modalidade)
     }
 
     async adicionar(dados: {
         nome: string,
-        modalide: string
+        modalidade: string
         data_procura: string,
-        data_inicio: string,
+        data_experiencia: string,
         semana: string, 
         horario:string,
         contato: string,
         status: string,
     }){
-        await this.adicionarAlunoUseCase.execute(dados.nome, dados.modalide, dados.data_procura, dados.data_inicio, dados.semana, dados.horario, dados.contato, dados.status)
+        await this.adicionarAlunoUseCase.execute(dados.nome, dados.modalidade, dados.data_procura, dados.data_experiencia, dados.semana, dados.horario, dados.contato, dados.status)
     }
 }
 
-export const alunoController = new AlunoController(AdicionarAlunoUseCase, LerAlunoUseCase);
+export default AlunoController

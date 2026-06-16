@@ -1,5 +1,4 @@
 import { openExcel } from "../../domain/services/excel";
-import AlunoController from "../controllers/AlunoController";
 
 function Configuration(): React.JSX.Element {
     const excelFilePath = localStorage.getItem("excelFilePath");
