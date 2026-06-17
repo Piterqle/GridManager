@@ -10,7 +10,7 @@ import { BsThreeDotsVertical, BsTelephone } from "react-icons/bs";
 
 
 // Importing Container Controller
-import {alunoController} from "@renderer/sheard/container";
+import {alunoController} from "@renderer/shared/container";
 
 function ExperimentalSheet(): React.JSX.Element {
     

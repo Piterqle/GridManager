@@ -4,7 +4,7 @@ class Aluno {
     public nome: string,
     public modalidade: string,
     public data_procura: string,
-    public data_experienciax: string,
+    public data_experiencia: string,
     public semana: string,
     public horario: string,
     public contato: string,

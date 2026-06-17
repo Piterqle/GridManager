@@ -2,6 +2,7 @@ import { ipcMain, dialog } from "electron";
 import * as xlsx from "xlsx";
 import Aluno from "../../renderer/src/domain/entidades/alunoClass"
 import { json } from "stream/consumers";
+import ExcelJs from "exceljs"
 
 ipcMain.handle("open-excel", async () => {
   const result = await dialog.showOpenDialog({
@@ -18,7 +19,29 @@ ipcMain.handle("open-excel", async () => {
 });
 
 ipcMain.handle("add-excel", async (_, filePath: string, Aluno: Aluno) => {
-  
+  try{
+    const wb = new ExcelJs.Workbook();
+    await wb.xlsx.readFile(filePath)
+
+    const ws = wb.getWorksheet(Aluno.modalidade.toUpperCase())
+
+    if (ws) {
+      ws.addRow([
+        Aluno.nome,
+        formatDate(Aluno.data_procura),
+        formatDate(Aluno.data_experiencia),
+        Aluno.semana.toUpperCase(),
+        Aluno.horario, 
+        Aluno.contato,
+        Aluno.status,
+      ])
+    }
+    await wb.xlsx.writeFile(filePath)
+    
+  } catch (e) {
+    console.log("Error to add Aluno" + e)
+    return;
+  }
 })
 
 ipcMain.handle("read-excel", async (_, filePath: string, tipoReturn: string, modalidade: string = "All") => {
@@ -75,6 +98,13 @@ function transformExcelDate(excelDate: number): string {
   }
 }
 
+
+const formatDate = (date: string) => {
+    const [YYYY, MM, dd] = date.split("-")
+    
+    const foramtedDate = `${dd}/${MM}/${YYYY}`
+    return foramtedDate
+}
 
 function transformHours(hours: number): string {
 
