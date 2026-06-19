@@ -46,9 +46,9 @@ class Firebase {
 
     addAluno = async () => {
         try {
-
-        } catch (e) {
             
+        } catch (e) {
+
         }
     }
 
