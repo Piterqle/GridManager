@@ -76,6 +76,7 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
 
 
         alunoController.adicionar(form)
+        onClose()
     }
 
     return (
