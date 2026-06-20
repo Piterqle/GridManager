@@ -22,8 +22,10 @@ class AlunoController {
         contato: string,
         status: string,
     }){
-        await this.adicionarAlunoUseCase.execute(dados.nome, dados.modalidade, dados.data_procura, dados.data_experiencia, dados.semana, dados.horario, dados.contato, dados.status)
+        await this.adicionarAlunoUseCase.execute(dados.nome, dados.modalidade, dados.data_procura, dados.data_experiencia, dados.semana, dados.horario, dados.contato, dados.status)    
     }
+
+
 }
 
 export default AlunoController

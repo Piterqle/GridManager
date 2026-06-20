@@ -1,9 +1,9 @@
 import AlunoController from "../presentation/controllers/AlunoController";
 import LerAlunoUseCase from "@renderer/aplication/casoDeUso/LerAlunoUseCase";
-import ExcelAlunoRepository from "@renderer/infrastructure/ExcelAlunoRepository";
+import AlunoRepository from "@renderer/infrastructure/AlunoRepository";
 import { AdicionarAlunoUseCase } from "@renderer/aplication/casoDeUso/AdicionarAlunoExperimental";
 
-const repository = new ExcelAlunoRepository
+const repository = new AlunoRepository
 const useCaseLerAluno = new LerAlunoUseCase(repository)
 const useCaseAddAluno = new AdicionarAlunoUseCase(repository)
 const alunoController  = new AlunoController(useCaseAddAluno, useCaseLerAluno)

@@ -15,11 +15,11 @@ if (process.contextIsolated) {
         openExcel: () => {
           return ipcRenderer.invoke("open-excel")
         },
-        readExcel: (filePath: string, tipoReturn: string, modalidade: string = "All") => {
-          return ipcRenderer.invoke("read-excel", filePath, tipoReturn, modalidade)
+        readDB: (filePath: string, tipoReturn: string, modalidade: string = "All") => {
+          return ipcRenderer.invoke("read-aluno", filePath, tipoReturn, modalidade)
         },
-        addExcel: (filePath: string, Aluno: Aluno) => {
-          return ipcRenderer.invoke("add-excel", filePath, Aluno)
+        addDB: (filePath: string, Aluno: Aluno) => {
+          return ipcRenderer.invoke("add-aluno", filePath, Aluno)
         }
       })
 

@@ -1,8 +1,11 @@
 import { ipcMain, dialog } from "electron";
 import * as xlsx from "xlsx";
 import Aluno from "../../renderer/src/domain/entidades/alunoClass"
+import { FirebaseService } from "../services/Firebase"
 import ExcelJs from "exceljs"
 
+
+const Firebase = new FirebaseService
 ipcMain.handle("open-excel", async () => {
   const result = await dialog.showOpenDialog({
     properties: ["openFile"],
@@ -17,25 +20,11 @@ ipcMain.handle("open-excel", async () => {
   return result.filePaths[0] || null;
 });
 
-ipcMain.handle("add-excel", async (_, filePath: string, Aluno: Aluno) => {
+ipcMain.handle("add-aluno", async (_, filePath: string, Aluno: Aluno) => {
   try {
-    const wb = new ExcelJs.Workbook();
-    await wb.xlsx.readFile(filePath)
+    
 
-    const ws = wb.getWorksheet(Aluno.modalidade.toUpperCase())
-
-    if (ws) {
-      ws.addRow([
-        Aluno.nome,
-        formatDate(Aluno.data_procura),
-        formatDate(Aluno.data_experiencia),
-        Aluno.semana.toUpperCase,
-        Aluno.horario,
-        Aluno.contato,
-        Aluno.status,
-      ])
-    }
-    await wb.xlsx.writeFile(filePath)
+    await Firebase.addAluno(Aluno)
 
   } catch (e) {
     console.log("Error to add Aluno" + e)
@@ -43,7 +32,7 @@ ipcMain.handle("add-excel", async (_, filePath: string, Aluno: Aluno) => {
   }
 })
 
-ipcMain.handle("read-excel", async (_, filePath: string, tipoReturn: string, modalidade: string = "All") => {
+ipcMain.handle("read-aluno", async (_, filePath: string, tipoReturn: string, modalidade: string = "All") => {
   try {
     const cabecalhoEsperado = ["Nome", "Data da Procura", "Data de Experiência", "Semana", "Horário", "Contato", "Status"];
     const workbook = xlsx.readFile(filePath);
@@ -78,6 +67,7 @@ ipcMain.handle("read-excel", async (_, filePath: string, tipoReturn: string, mod
           row[6] || ""
         )));
     }
+    
     return alunos;
   } catch (error) {
     console.error("Error reading Excel file:", error);
