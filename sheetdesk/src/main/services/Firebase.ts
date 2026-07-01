@@ -1,5 +1,5 @@
 import { FirebaseApp, initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, Firestore, doc, getDoc, getDocs, where, WhereFilterOp, setDoc, runTransaction } from "firebase/firestore";
+import { getFirestore, collection, addDoc, Firestore, doc, getDoc, getDocs, where, WhereFilterOp, setDoc, runTransaction, query } from "firebase/firestore";
 import Aluno from "../../renderer/src/domain/entidades/alunoClass"
 
 
@@ -26,25 +26,34 @@ export class FirebaseService {
         this.db = getFirestore(FirebaseService.app)
     }
 
-    readAluno = async (filtro: string) =>  {
+    readAluno = async (filtro: string = "") =>  {
         try {
-            if (filtro) {
+            const snapShot = await getDocs(collection(this.db, "Alunos"));
+            if (filtro.length > 0) {
                 const [col, operadores, value] = filtro.split(" ");
-
-                const snapShot = await getDocs(collection(this.db, "Alunos"));
-
                 const operadoresFirebase = operadores === "="? "==" : operadores;
-                return snapShot.docs.map(doc => {
+                
+
+                const res = await snapShot.docs.map(doc => ({
                     id : doc.id,
-                    doc.data()
-                }, where(col, operadoresFirebase as WhereFilterOp, value))
-            
+                    data: doc.data()
+                }), where(col, operadoresFirebase as WhereFilterOp, value))
+
+                return res;
                 
             }
-            return;
+
+            const res = await snapShot.docs.map(doc => ({
+                id: doc.id,
+                data: doc.data()
+            }));
+            
+            console.log(res)
+            return res;
+            
         } catch (e) {
             console.error("Erro ao buscar:", e)
-            return [];
+            return {};
         }
 
     }

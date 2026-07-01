@@ -2,7 +2,7 @@ import { ipcMain, dialog } from "electron";
 import * as xlsx from "xlsx";
 import Aluno from "../../renderer/src/domain/entidades/alunoClass"
 import { FirebaseService } from "../services/Firebase"
-import ExcelJs from "exceljs"
+
 
 
 const Firebase = new FirebaseService
@@ -22,8 +22,7 @@ ipcMain.handle("open-excel", async () => {
 
 ipcMain.handle("add-aluno", async (_, filePath: string, Aluno: Aluno) => {
   try {
-    
-
+  
     await Firebase.addAluno(Aluno)
 
   } catch (e) {
@@ -32,7 +31,7 @@ ipcMain.handle("add-aluno", async (_, filePath: string, Aluno: Aluno) => {
   }
 })
 
-ipcMain.handle("read-aluno", async (_, filePath: string, tipoReturn: string, modalidade: string = "All") => {
+ipcMain.handle("read-aluno", async (_, filePath: string, tipoReturn: string, modalidade: string = "") => {
   try {
     const cabecalhoEsperado = ["Nome", "Data da Procura", "Data de Experiência", "Semana", "Horário", "Contato", "Status"];
     const workbook = xlsx.readFile(filePath);
@@ -53,24 +52,25 @@ ipcMain.handle("read-aluno", async (_, filePath: string, tipoReturn: string, mod
         continue;
       }
 
+    }
+    const res =  await Firebase.readAluno(modalidade);
+    
+    for(var index in res){
+      console.log(res[index].data)
 
-
-      alunos.push(...jsonData.slice(1).map((row: any[]) =>
-        new Aluno(
-          row[0] || "",
-          sheetName || "",
-          transformExcelDate(row[1]) == "Invalid Date" ? row[1] : transformExcelDate(row[1]) || "",
-          transformExcelDate(row[2]) == "Invalid Date" ? row[2] : transformExcelDate(row[2]) || "",
-          row[3] || "",
-          transformHours(row[4]) == "NaN:NaN" ? row[4] : transformHours(row[4]) || "--:--",
-          row[5] || "",
-          row[6] || ""
-        )));
+      alunos.push(new Aluno(res[index].data.Nome, 
+        res[index].data.Modalidade, 
+        formatDate(res[index].data.DataDaProcura), 
+        formatDate(res[index].data.DataDaExperiencia), 
+        res[index].data.Semana, 
+        res[index].data.Horario, 
+        res[index].data.Contato, 
+        res[index].data.Status))
     }
     
     return alunos;
   } catch (error) {
-    console.error("Error reading Excel file:", error);
+    console.error("Error reading Excel file:", error);  
     return [];
   }
 });
@@ -94,12 +94,4 @@ const formatDate = (date: string) => {
 
   const foramtedDate = `${dd}/${MM}/${YYYY}`
   return foramtedDate
-}
-
-function transformHours(hours: number): string {
-
-  const totalMinutes = Math.round(hours * 24 * 60);
-  const hoursInt = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  return `${String(hoursInt).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }

@@ -14,7 +14,12 @@ import {alunoController} from "@renderer/shared/container";
 
 function ExperimentalSheet(): React.JSX.Element {
     
-    
+    enum alunoStatus {
+        Matriculado = "bg-green-100 text-green-800",
+        Cancelado = "bg-red-100 text-red-800",
+        Pendente = "bg-yellow-100 text-yellow-800",
+        EmAndamento = "bg-blue-100 text-blue-800"
+    }
     // Estado do dropdown de modalidades
     const [listDropdow, setListDrop] = useState<any[]>([]);
     const [selectedModalidade, setSelectedModalidade] = useState<string>("");
@@ -33,21 +38,10 @@ function ExperimentalSheet(): React.JSX.Element {
     const [alunosDados, setAlunosDados] = useState<any[]>([]);
 
     useEffect(() => {
-        const fetchSheets = async () => {
-            
-            readExcel(filePath || '', "Sheet", "All").then((sheets) => {
-                const modalidades: any[] = [];
-                for (const sheet of sheets) {
-                    const sheetName = sheet[0] + sheet.slice(1).toLowerCase();
-                    modalidades.push(sheetName);
-                }
-                setListDrop(modalidades);
-            
-            })
-        };
-        fetchSheets();
-    }, [filePath]);
-
+        const modalidades = ["Ballet", "Castanholas", "Dança do Ventre", "Dança de Salão", "Dança Cigana", "Flamenco", "Forró", "Funk", "Jazz Funk", "Jazz", "Pole", "Rytmus", "Rytmus Sênior", "Samba de Gafieira"];
+        setListDrop(modalidades);
+    });
+    
     const fetchAlunos = async (modalidade: string) => {
         setLoading(true);
         if (!filePath) {
@@ -215,7 +209,7 @@ function ExperimentalSheet(): React.JSX.Element {
                                                 {aluno.contato}
                                             </td>
                                             <td className="border-b border-gray-300 p-3 truncate overflow-hidden whitespace-nowrap">
-                                                <p className={`px-2 py-1 rounded-md text-[14px] font-medium ${aluno.status === "Matriculado" ? 'bg-green-100 text-green-800' : aluno.status === "Inativo" ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>
+                                                <p className={`px-2 py-1 rounded-md text-[14px] text-center font-medium ${alunoStatus[aluno.status as keyof typeof alunoStatus]}`}>
                                                     {aluno.status}
                                                 </p>
                                             </td>
