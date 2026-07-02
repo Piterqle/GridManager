@@ -59,7 +59,7 @@ function App(): React.JSX.Element {
               Dashboard
             </button>
             <button className="text-gray-300 hover:bg-gray-600 w-full h-12" onClick={() => handleScreenSelect("spreadsheets")}>
-              Spreadsheets
+              Tabela Experimental
             </button>
             <button className="text-gray-300 hover:bg-gray-600 w-full h-12" onClick={() => handleScreenSelect("settings")}>
               Settings

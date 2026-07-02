@@ -7,7 +7,7 @@ export class AdicionarAlunoUseCase {
     async execute(Nome, modalidade, data_procura, data_experiencia, semena, horario, contato, status) {
 
         const aluno = 
-            new Aluno(Nome, modalidade, data_procura, data_experiencia, semena, horario, contato, status)
+            new Aluno("", Nome, modalidade, data_procura, data_experiencia, semena, horario, contato, status)
         
 
         await this.alunoRepository.salvar(aluno)

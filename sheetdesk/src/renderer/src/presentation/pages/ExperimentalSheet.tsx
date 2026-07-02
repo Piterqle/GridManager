@@ -88,7 +88,7 @@ function ExperimentalSheet(): React.JSX.Element {
                 <section className="fixed inset-0 scale-110 rounded-xl bg-tranparent z-30 ">
                     <div className="w-full h-full blur-3xl opacity-50  bg-black"/>
                     <div className="flex items-center justify-center w-full h-full absolute top-0 left-0">
-                        <ModalAdicionar open={isModalOpen} onClose={() => setIsModalOpen(false)} Aluno={[]} modalidades={listDropdow}  />
+                        <ModalAdicionar open={isModalOpen} onClose={() => {setIsModalOpen(false), fetchAlunos(selectedModalidade)}} Aluno={[]} modalidades={listDropdow}  />
                     </div>
                 </section> 
             }
@@ -193,7 +193,7 @@ function ExperimentalSheet(): React.JSX.Element {
                                                 {aluno.data_procura}
                                             </td>
                                             <td className="border-b border-gray-300 p-3 truncate overflow-hidden whitespace-nowrap text-gray-400">
-                                                {aluno.data_inicio}
+                                                {aluno.data_experiencia}
                                             </td>
                                             <td className="border-b flex flex-col border-gray-300 p-3 truncate overflow-hidden whitespace-nowrap">
                                                 <p className="px-2 py-1 rounded-md text-[14px] font-medium w-fit text-purple-900 bg-purple-300">

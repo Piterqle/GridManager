@@ -69,7 +69,7 @@ export class FirebaseService {
 
 
                 if(contadorSnap.exists()) {
-                    idNovo = contadorSnap.data().ID + 1
+                    idNovo = parseInt(contadorSnap.data().ID) + 1
                 }
 
                 transanction.set(contadorRef, {
@@ -77,22 +77,20 @@ export class FirebaseService {
                 })
             })
             const alunoRef = doc(this.db, "Alunos", idNovo.toString())
-
-            await runTransaction(this.db, async (transaction) => {
-                
-                transaction.set(alunoRef, 
-                {
-                Nome: aluno.nome,
-                Modalidade: aluno.modalidade,
-                DataDaProcura: aluno.data_procura,
-                DataDaExperiencia: aluno.data_experiencia,
-                Semana: aluno.semana,
-                Horario: aluno.horario,
-                Contato: aluno.contato,
-                Status: aluno.status
-            })})
+            await setDoc(alunoRef, {
+                Nome: aluno.nome || "",
+                Modalidade: aluno.modalidade || "",
+                DataDaProcura: aluno.data_procura || "",
+                DataDaExperiencia: aluno.data_experiencia || "",
+                Semana: aluno.semana || "",
+                Horario: aluno.horario || "",
+                Contato: aluno.contato || "",
+                Status: aluno.status || ""
+            })
+            console.log("Aluno adicionado com sucesso!")
             return;
         } catch (e) {
+            console.error("Erro ao adicionar aluno:", e)
             return;
         }
     }
