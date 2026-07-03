@@ -3,11 +3,11 @@ import IAlunoRepository from "@renderer/domain/repositories/IAlunoRepository";
 
 
 class AlunoRepository
-implements IAlunoRepository{
-    
+    implements IAlunoRepository {
+
     async salvar(Aluno: Aluno): Promise<void> {
         const filePath = localStorage.getItem('excelFilePath')
-        if (filePath === "" || filePath === null) {throw new Error("Arquivo não encontrado nao localStorage");}
+        if (filePath === "" || filePath === null) { throw new Error("Arquivo não encontrado nao localStorage"); }
 
         await window.api.addDB(filePath, Aluno)
 
@@ -15,14 +15,22 @@ implements IAlunoRepository{
 
     async listar(modalidade): Promise<Aluno[]> {
         try {
-            const filePath = localStorage.getItem('excelFilePath')
-            if (filePath === "" || filePath === null) {throw new Error("Arquivo não encontrado nao localStorage");}
 
             return await window.api.readDB(modalidade)
-        } catch(e) {
+        } catch (e) {
             throw new Error("Usuarios não encontrados: " + e)
         }
     }
+
+    async editar(Aluno: Aluno): Promise<void> {
+        try {
+            return await window.api.editDB(Aluno)
+        }
+        catch (e) {
+            throw new Error("Erro ao editar usuario: " + e)
+        }
+    }
+
 }
 
 

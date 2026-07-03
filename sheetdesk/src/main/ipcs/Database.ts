@@ -56,6 +56,15 @@ ipcMain.handle("read-aluno", async (_, modalidade: string = "") => {
   }
 });
 
+ipcMain.handle("edit-aluno", async (_, Aluno: Aluno) => {
+  try {
+      await Firebase.editAluno(Aluno)
+  } catch (e) {
+    console.log("Error to edit Aluno" + e)
+    return;
+  }
+
+})
 
 const formatDate = (date: string) => {
   const [YYYY, MM, dd] = date.split("-")

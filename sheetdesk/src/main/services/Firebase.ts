@@ -1,5 +1,5 @@
 import { FirebaseApp, initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, Firestore, doc, getDoc, getDocs, where, WhereFilterOp, setDoc, runTransaction, query } from "firebase/firestore";
+import { getFirestore, collection, Firestore, doc, getDocs, where, WhereFilterOp, setDoc, runTransaction, query, updateDoc } from "firebase/firestore";
 import Aluno from "../../renderer/src/domain/entidades/alunoClass"
 
 
@@ -97,6 +97,25 @@ export class FirebaseService {
         }
     }
 
+    editAluno = async (aluno: Aluno) => {
+        try {
+            const alunoRef = doc(this.db, "Alunos", aluno.id)
+            await updateDoc(alunoRef, {
+                Nome: aluno.nome || "",
+                Modalidade: aluno.modalidade || "",
+                DataDaProcura: aluno.data_procura || "",
+                DataDaExperiencia: aluno.data_experiencia || "",
+                Semana: aluno.semana || "",
+                Horario: aluno.horario || "",
+                Contato: aluno.contato || "",
+                Status: aluno.status || ""
+            })
+            console.log("Aluno atualizado com sucesso!")
+            return;
+        } catch (e) {
+            console.error("Erro ao atualizar aluno:", e)
+            return;
+        }
+    }
 }
-
 

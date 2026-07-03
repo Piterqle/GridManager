@@ -8,6 +8,7 @@ declare global {
       openExcel: () => Promise<string[]>,
       readDB: (modalidade: string) => Promise<Aluno[]>
       addDB: (filePath: string, Aluno: Aluno) => Promise<void>
+      editDB: (Aluno: Aluno) => Promise<void>
     }
   }
 }

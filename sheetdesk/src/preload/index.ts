@@ -20,6 +20,9 @@ if (process.contextIsolated) {
         },
         addDB: (filePath: string, Aluno: Aluno) => {
           return ipcRenderer.invoke("add-aluno", filePath, Aluno)
+        },
+        editDB: (Aluno: Aluno) => {
+          return ipcRenderer.invoke("edit-aluno", Aluno)
         }
       })
 
