@@ -15,8 +15,8 @@ if (process.contextIsolated) {
         openExcel: () => {
           return ipcRenderer.invoke("open-excel")
         },
-        readDB: (filePath: string, tipoReturn: string, modalidade: string = "All") => {
-          return ipcRenderer.invoke("read-aluno", filePath, tipoReturn, modalidade)
+        readDB: (modalidade: string = "All") => {
+          return ipcRenderer.invoke("read-aluno", modalidade)
         },
         addDB: (filePath: string, Aluno: Aluno) => {
           return ipcRenderer.invoke("add-aluno", filePath, Aluno)

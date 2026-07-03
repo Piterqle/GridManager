@@ -33,7 +33,7 @@ function ExperimentalSheet(): React.JSX.Element {
 
     // Manipular os Estado do modal
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
+    const [alunoEdit, setAlunoEdit] = useState<any | null>(null);
 
     const [alunosDados, setAlunosDados] = useState<any[]>([]);
 
@@ -49,11 +49,11 @@ function ExperimentalSheet(): React.JSX.Element {
             return [];
         }
 
-
         if (modalidade.trim() === "" && selectedModalidade) {
             modalidade = selectedModalidade.toUpperCase();
         }
-        const data = await alunoController.lerDados("alunos", modalidade.toUpperCase() || "All");
+
+        const data = await alunoController.lerDados(modalidade == "All" ? "" : modalidade);
         setLoading(false);
         return data;
     }
@@ -63,7 +63,7 @@ function ExperimentalSheet(): React.JSX.Element {
             setAlunosDados(data || []);
         });
         const alunos = setInterval(async () => {
-            setAlunosDados(await fetchAlunos(selectedModalidade.toUpperCase()) || []);
+            setAlunosDados(await fetchAlunos(selectedModalidade) || []);
         }, 30000); // Atualiza a cada 1 minutos
 
         return () => clearInterval(alunos);
@@ -88,7 +88,7 @@ function ExperimentalSheet(): React.JSX.Element {
                 <section className="fixed inset-0 scale-110 rounded-xl bg-tranparent z-30 ">
                     <div className="w-full h-full blur-3xl opacity-50  bg-black"/>
                     <div className="flex items-center justify-center w-full h-full absolute top-0 left-0">
-                        <ModalAdicionar open={isModalOpen} onClose={() => {setIsModalOpen(false), fetchAlunos(selectedModalidade)}} Aluno={[]} modalidades={listDropdow}  />
+                        <ModalAdicionar open={isModalOpen} onClose={() => {setIsModalOpen(false), fetchAlunos(selectedModalidade), setAlunoEdit(null)}} Aluno={alunoEdit} modalidades={listDropdow}  />
                     </div>
                 </section> 
             }
@@ -113,11 +113,12 @@ function ExperimentalSheet(): React.JSX.Element {
                     <div className="flex items-center gap-2 mt-1">
                         <select className="border h-[40px] w-110 border-gray-300 rounded-md px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 " value={selectedModalidade} onChange={async (e) => {
                             setSelectedModalidade(e.target.value);
+                            console.log("Modalidade selecionada:", e.target.value);
                             await fetchAlunos(e.target.value).then((data) => { setAlunosDados(data || []) ; }
                             )
                         }}>
 
-                            <option value="">Todas as modalidades</option>
+                            <option value="All">Todas as modalidades</option>
                             {listDropdow.map((modalidade, index) => (
                                 <option key={index} value={modalidade}>
                                     {modalidade}
@@ -214,7 +215,7 @@ function ExperimentalSheet(): React.JSX.Element {
                                                 </p>
                                             </td>
                                             <td className="border-b border-gray-300 p-3 text-right">
-                                                <button className="hover:underline">
+                                                <button className="hover:underline" onClick={() => {  setAlunoEdit(aluno); setIsModalOpen(true);}}>
                                                     <BsThreeDotsVertical className="size-4  text-gray-900" />
                                                 </button>
                                             </td>

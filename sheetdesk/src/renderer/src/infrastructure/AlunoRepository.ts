@@ -13,12 +13,12 @@ implements IAlunoRepository{
 
     }
 
-    async listar(tipoRetrun, modalidade): Promise<Aluno[]> {
+    async listar(modalidade): Promise<Aluno[]> {
         try {
             const filePath = localStorage.getItem('excelFilePath')
             if (filePath === "" || filePath === null) {throw new Error("Arquivo não encontrado nao localStorage");}
 
-            return await window.api.readDB(filePath, tipoRetrun, modalidade)
+            return await window.api.readDB(modalidade)
         } catch(e) {
             throw new Error("Usuarios não encontrados: " + e)
         }

@@ -29,15 +29,18 @@ export class FirebaseService {
     readAluno = async (filtro: string = "") =>  {
         try {
             const snapShot = await getDocs(collection(this.db, "Alunos"));
-            if (filtro.length > 0) {
+            if (filtro.trim().length > 0) {
                 const [col, operadores, value] = filtro.split(" ");
                 const operadoresFirebase = operadores === "="? "==" : operadores;
                 
+                const filteredQuery = query(collection(this.db, "Alunos"), where(col, operadoresFirebase as WhereFilterOp, value.replace(/"/g, '')));
 
-                const res = await snapShot.docs.map(doc => ({
-                    id : doc.id,
-                    data: doc.data()
-                }), where(col, operadoresFirebase as WhereFilterOp, value))
+                const res = await getDocs(filteredQuery).then((snapshot) => {
+                    return snapshot.docs.map(doc => ({
+                        id : doc.id,
+                        data: doc.data()
+                    }))
+                })
 
                 return res;
                 
@@ -48,7 +51,6 @@ export class FirebaseService {
                 data: doc.data()
             }));
             
-            console.log(res)
             return res;
             
         } catch (e) {

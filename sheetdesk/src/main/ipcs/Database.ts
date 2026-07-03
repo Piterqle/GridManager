@@ -37,7 +37,6 @@ ipcMain.handle("read-aluno", async (_, modalidade: string = "") => {
     const res =  await Firebase.readAluno(modalidade);
     
     for(var index in res){
-      console.log(res[index].id)
 
       alunos.push(new Aluno(res[index].id.toString(),
         res[index].data.Nome, 

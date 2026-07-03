@@ -8,8 +8,8 @@ class AlunoController {
             private lerAlunoUseCase: LerAlunoUseCase,
         ){}
 
-    async lerDados(tipoReturn: string, modalidade: string) {
-        return await this.lerAlunoUseCase.execute(tipoReturn, modalidade)
+    async lerDados(modalidade: string) {
+        return await this.lerAlunoUseCase.execute(modalidade)
     }
 
     async adicionar(dados: {
