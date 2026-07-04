@@ -1,6 +1,5 @@
 // Import React and necessary hooks
 import { useEffect, useState } from "react";
-import { readExcel } from "@renderer/domain/services/excel";
 import ModalAdicionar from "@renderer/presentation/components/ModalAdicionar";
 
 
@@ -10,7 +9,7 @@ import { BsThreeDotsVertical, BsTelephone } from "react-icons/bs";
 
 
 // Importing Container Controller
-import {alunoController} from "@renderer/shared/container";
+import {alunoController} from "@renderer/shared/DependecyServices";
 
 function ExperimentalSheet(): React.JSX.Element {
     
@@ -18,8 +17,9 @@ function ExperimentalSheet(): React.JSX.Element {
         Matriculado = "bg-green-100 text-green-800",
         Cancelado = "bg-red-100 text-red-800",
         Pendente = "bg-yellow-100 text-yellow-800",
-        EmAndamento = "bg-blue-100 text-blue-800"
+        "Em Andamento" = "bg-blue-100 text-blue-800"
     }
+
     // Estado do dropdown de modalidades
     const [listDropdow, setListDrop] = useState<any[]>([]);
     const [selectedModalidade, setSelectedModalidade] = useState<string>("");
@@ -42,28 +42,14 @@ function ExperimentalSheet(): React.JSX.Element {
         setListDrop(modalidades);
     });
     
-    const fetchAlunos = async (modalidade: string) => {
-        setLoading(true);
-        if (!filePath) {
-            console.error("No Excel file path found in localStorage.");
-            return [];
-        }
-
-        if (modalidade.trim() === "" && selectedModalidade) {
-            modalidade = selectedModalidade.toUpperCase();
-        }
-
-        const data = await alunoController.lerDados(modalidade == "All" ? "" : modalidade);
-        setLoading(false);
-        return data;
-    }
+    
 
     useEffect(() => {
-        fetchAlunos(selectedModalidade).then((data) => {
+        alunoController.ReadAlunos(selectedModalidade, setLoading).then((data) => {
             setAlunosDados(data || []);
         });
         const alunos = setInterval(async () => {
-            setAlunosDados(await fetchAlunos(selectedModalidade) || []);
+            setAlunosDados(await alunoController.ReadAlunos(selectedModalidade, setLoading) || []);
         }, 30000); // Atualiza a cada 1 minutos
 
         return () => clearInterval(alunos);
@@ -88,7 +74,7 @@ function ExperimentalSheet(): React.JSX.Element {
                 <section className="fixed inset-0 scale-110 rounded-xl bg-tranparent z-30 ">
                     <div className="w-full h-full blur-3xl opacity-50  bg-black"/>
                     <div className="flex items-center justify-center w-full h-full absolute top-0 left-0">
-                        <ModalAdicionar open={isModalOpen} onClose={() => {setIsModalOpen(false), fetchAlunos(selectedModalidade), setAlunoEdit(null)}} Aluno={alunoEdit} modalidades={listDropdow}  />
+                        <ModalAdicionar open={isModalOpen} onClose={() => {setIsModalOpen(false), alunoController.ReadAlunos(selectedModalidade, setLoading), setAlunoEdit(null)}} Aluno={alunoEdit} modalidades={listDropdow}  />
                     </div>
                 </section> 
             }
@@ -114,7 +100,7 @@ function ExperimentalSheet(): React.JSX.Element {
                         <select className="border h-[40px] w-110 border-gray-300 rounded-md px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 " value={selectedModalidade} onChange={async (e) => {
                             setSelectedModalidade(e.target.value);
                             console.log("Modalidade selecionada:", e.target.value);
-                            await fetchAlunos(e.target.value).then((data) => { setAlunosDados(data || []) ; }
+                            await alunoController.ReadAlunos(e.target.value, setLoading).then((data) => { setAlunosDados(data || []) ; }
                             )
                         }}>
 

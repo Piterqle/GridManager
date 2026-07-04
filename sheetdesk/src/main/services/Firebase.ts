@@ -1,6 +1,6 @@
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { getFirestore, collection, Firestore, doc, getDocs, where, WhereFilterOp, setDoc, runTransaction, query, updateDoc } from "firebase/firestore";
-import Aluno from "../../renderer/src/domain/entidades/alunoClass"
+import Aluno from "../../renderer/src/domain/entities/alunoClass"
 
 
 

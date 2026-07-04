@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import Aluno from '../renderer/src/domain/entidades/alunoClass'
+import Aluno from '../renderer/src/domain/entities/alunoClass'
 
 // Custom APIs for renderer
 const api = {}

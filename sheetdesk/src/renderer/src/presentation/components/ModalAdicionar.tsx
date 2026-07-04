@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 
-import { alunoController, formatDate } from "@renderer/shared/container";
+import { formatDate } from "@renderer/shared/DependecyServices";
 
 const listStatus = ['Matriculado', 'Cancelado', 'Pendente', 'Em Andamento']
 
@@ -90,7 +90,7 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
         setForm({ ...form, semana: semana })
 
 
-        alunoController.adicionar(form)
+        alunoController.CreateAluno(form)
         onClose()
     }
 

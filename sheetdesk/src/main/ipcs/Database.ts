@@ -1,6 +1,6 @@
 import { ipcMain, dialog } from "electron";
 import * as xlsx from "xlsx";
-import Aluno from "../../renderer/src/domain/entidades/alunoClass"
+import Aluno from "../../renderer/src/domain/entities/alunoClass"
 import { FirebaseService } from "../services/Firebase"
 
 

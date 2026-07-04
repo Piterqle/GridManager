@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import "reflect-metadata";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaGear } from "react-icons/fa6";
 

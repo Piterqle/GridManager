@@ -1,11 +1,12 @@
-import Aluno from "@renderer/domain/entidades/alunoClass";
+import Aluno from "@renderer/domain/entities/alunoClass";
 import IAlunoRepository from "@renderer/domain/repositories/IAlunoRepository";
+import { injectable } from "inversify";
 
-
+@injectable()
 class AlunoRepository
     implements IAlunoRepository {
 
-    async salvar(Aluno: Aluno): Promise<void> {
+    async CreateAluno(Aluno: Aluno): Promise<void> {
         const filePath = localStorage.getItem('excelFilePath')
         if (filePath === "" || filePath === null) { throw new Error("Arquivo não encontrado nao localStorage"); }
 
@@ -13,7 +14,7 @@ class AlunoRepository
 
     }
 
-    async listar(modalidade): Promise<Aluno[]> {
+    async ReadAlunos(modalidade: string): Promise<Aluno[]> {
         try {
 
             return await window.api.readDB(modalidade)
@@ -22,7 +23,7 @@ class AlunoRepository
         }
     }
 
-    async editar(Aluno: Aluno): Promise<void> {
+    async UpdateAluno(Aluno: Aluno): Promise<void> {
         try {
             return await window.api.editDB(Aluno)
         }

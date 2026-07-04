@@ -1,10 +1,9 @@
-import Aluno from "../entidades/alunoClass";
-
+import Aluno from "../entities/alunoClass";
 
 interface IAlunoRepository{
-    salvar(Aluno: Aluno): Promise<void>;
-    listar(modalidade: string): Promise<Aluno[]>;
-    update(Aluno: Aluno): Promise<void>;
+    CreateAluno(Aluno: Aluno): Promise<void>;
+    ReadAlunos(modalidade: string): Promise<Aluno[]>;
+    UpdateAluno(Aluno: Aluno): Promise<void>;
 }
 
 export default IAlunoRepository
