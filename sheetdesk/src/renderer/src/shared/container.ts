@@ -17,5 +17,11 @@ const formatDate = (date: string) => {
     return foramtedDate
 }
 
+const formatDateToInput = (date: string) => {
+    const [dd, MM, YYYY] = date.split("/")
 
-export {alunoController, formatDate}
+    const foramtedDate = `${YYYY}-${MM}-${dd}`
+    return foramtedDate
+}
+
+export {alunoController, formatDate, formatDateToInput}

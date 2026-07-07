@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 
-import { alunoController, formatDate } from "@renderer/shared/container";
+import { alunoController, formatDateToInput } from "@renderer/shared/container";
 
 const listStatus = ['Matriculado', 'Cancelado', 'Pendente', 'Em Andamento']
 
@@ -21,26 +21,26 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
         }
     }, []);
 
-
     const [form, setForm] = useState({
         nome: "",
-        modalidade: "Ballet",
+        modalidade: "",
         data_procura: "",
         data_experiencia: "",
-        semana: "Domingo",
+        semana: "",
         horario: "",
         contato: "",
-        status: "Matriculado"
+        status: ""
     })
 
     useEffect(() => {
+
         if (Aluno) {
             setForm({
                 ...form,
                 nome: Aluno.nome,
                 modalidade: Aluno.modalidade,
-                data_procura: Date.parse(Aluno.data_procura.toString()) ? formatDate(Aluno.data_procura) : Aluno.data_procura,
-                data_experiencia: Date.parse(Aluno.data_experiencia.toString()) ? formatDate(Aluno.data_experiencia) : Aluno.data_experiencia,
+                data_procura: formatDateToInput(Aluno.data_procura),
+                data_experiencia: formatDateToInput(Aluno.data_experiencia),
                 semana: Aluno.semana,
                 horario: Aluno.horario,
                 contato: Aluno.contato,
@@ -68,7 +68,7 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
         e.currentTarget.value = valor;
     }
 
-    const onReady = () => {
+    const onReady = async (type: string) => {
         const pussuirValorVazio = Object.values(form).some(valor => valor.trim() === "")
         if (pussuirValorVazio) {
             alert("Preencha os campos")
@@ -80,17 +80,8 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
             return
         }
 
-        const data_procura = formatDate(form.data_procura)
-        setForm({ ...form, data_procura: data_procura })
 
-        const data_experiencia = formatDate(form.data_experiencia)
-        setForm({ ...form, data_experiencia: data_experiencia })
-
-        const semana = new Date(form.data_experiencia).toLocaleDateString('pt-BR', { weekday: 'long' })
-        setForm({ ...form, semana: semana })
-
-
-        alunoController.adicionar(form)
+        if (type === "adicionar") { await alunoController.adicionar(form) }
         onClose()
     }
 
@@ -170,17 +161,18 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dataInicio">
                             Data da Experiencia
                         </label>
-                        <input type="date" value={form.data_experiencia} onChange={(e) => setForm({ ...form, data_experiencia: e.target.value })} id="dataInicio" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                        <input type="date" value={form.data_experiencia} onChange={(e) => { setForm({ ...form, data_experiencia: e.target.value, semana: new Date(e.target.value).toLocaleDateString('pt-BR', { weekday: 'long', timeZone: 'UTC' }).replace(/^\w/, (c) => c.toUpperCase()) }) }}
+                            id="dataInicio" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                     </div>
                 </div>
                 <div className="flex justify-end">
                     {
                         Aluno && Aluno.nome ?
-                            <button type="button" onClick={() => onReady()} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <button type="button" onClick={() => onReady("atualizar")} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                                 Salvar
                             </button>
                             :
-                            <button type="button" onClick={() => onReady()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            <button type="button" onClick={() => onReady("adicionar")} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Adicionar
                             </button>
                     }

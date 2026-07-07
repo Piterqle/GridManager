@@ -1,6 +1,5 @@
 // Import React and necessary hooks
 import { useEffect, useState } from "react";
-import { readExcel } from "@renderer/domain/services/excel";
 import ModalAdicionar from "@renderer/presentation/components/ModalAdicionar";
 
 
@@ -18,7 +17,7 @@ function ExperimentalSheet(): React.JSX.Element {
         Matriculado = "bg-green-100 text-green-800",
         Cancelado = "bg-red-100 text-red-800",
         Pendente = "bg-yellow-100 text-yellow-800",
-        EmAndamento = "bg-blue-100 text-blue-800"
+        "Em Andamento" = "bg-blue-100 text-blue-800"
     }
     // Estado do dropdown de modalidades
     const [listDropdow, setListDrop] = useState<any[]>([]);
