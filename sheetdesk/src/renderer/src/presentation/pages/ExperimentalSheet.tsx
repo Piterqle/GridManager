@@ -77,6 +77,13 @@ function ExperimentalSheet(): React.JSX.Element {
 
     const alunosPagina = alunosDados.slice(primeiroIndice, ultimoIndice); // Substitua por seus dados reais de alunos
 
+    function submitForm(){
+        setIsModalOpen(false); 
+        fetchAlunos(selectedModalidade).then((data) => {
+            setAlunosDados(data)
+        }); 
+        setAlunoEdit(null)
+    }
 
     const totalPaginas = Math.ceil(alunosDados.length / intensPaginacao);
 
@@ -87,7 +94,7 @@ function ExperimentalSheet(): React.JSX.Element {
                 <section className="fixed inset-0 scale-110 rounded-xl bg-tranparent z-30 ">
                     <div className="w-full h-full blur-3xl opacity-50  bg-black"/>
                     <div className="flex items-center justify-center w-full h-full absolute top-0 left-0">
-                        <ModalAdicionar open={isModalOpen} onClose={() => {setIsModalOpen(false), fetchAlunos(selectedModalidade), setAlunoEdit(null)}} Aluno={alunoEdit} modalidades={listDropdow}  />
+                        <ModalAdicionar open={isModalOpen} onClose={() => {submitForm()}} Aluno={alunoEdit} modalidades={listDropdow}  />
                     </div>
                 </section> 
             }

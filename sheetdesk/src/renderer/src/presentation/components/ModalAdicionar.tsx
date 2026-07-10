@@ -3,12 +3,14 @@ import { IoMdClose } from "react-icons/io";
 
 import { alunoController, formatDateToInput } from "@renderer/shared/container";
 
-const listStatus = ['Matriculado', 'Cancelado', 'Pendente', 'Em Andamento']
 
 function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onClose: () => void; Aluno: any; modalidades: any[] }): React.JSX.Element {
-
+    
     if (!open) return <></>;
-
+    
+    var [modalidadesLocal, setModalidadeLocal] = useState(modalidades)
+    var [listStatus, setlistStatus] = useState(['Matriculado', 'Cancelado', 'Pendente', 'Em Andamento'])
+    
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
@@ -35,6 +37,9 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
     useEffect(() => {
 
         if (Aluno) {
+
+            
+            
             setForm({
                 ...form,
                 nome: Aluno.nome,
@@ -46,6 +51,9 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
                 contato: Aluno.contato,
                 status: Aluno.status
             })
+            modalidades = [`${Aluno.modalidade}`, ...modalidades.filter(item => item !== Aluno.modalidade)]
+            setModalidadeLocal(modalidades)
+            setlistStatus([`${Aluno.status}`, ...listStatus.filter(item => item !== Aluno.status)])
         }
     }, [Aluno]);
 
@@ -82,6 +90,7 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
 
 
         if (type === "adicionar") { await alunoController.adicionar(form) }
+        else if (type === "atualizar") { await alunoController.atualizar(Aluno.id, form) }
         onClose()
     }
 
@@ -109,7 +118,8 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
                         </label>
                         <select id="data_procura" onChange={(e) => setForm({ ...form, modalidade: e.target.value })} className="shadow-md border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline select " >
 
-                            {modalidades.map((modalidade, index) => (
+                            {
+                            modalidadesLocal.map((modalidade, index) => (
                                 <option key={index} value={modalidade} className="text-gray-700">
                                     {modalidade}
                                 </option>

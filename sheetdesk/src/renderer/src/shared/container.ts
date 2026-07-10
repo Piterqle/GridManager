@@ -2,11 +2,14 @@ import AlunoController from "../presentation/controllers/AlunoController";
 import LerAlunoUseCase from "@renderer/aplication/casoDeUso/LerAlunoUseCase";
 import AlunoRepository from "@renderer/infrastructure/AlunoRepository";
 import { AdicionarAlunoUseCase } from "@renderer/aplication/casoDeUso/AdicionarAlunoExperimental";
+import { UpdateAlunoUseCase } from "@renderer/aplication/casoDeUso/UpdateAlunoUseCase";
 
 const repository = new AlunoRepository
 const useCaseLerAluno = new LerAlunoUseCase(repository)
 const useCaseAddAluno = new AdicionarAlunoUseCase(repository)
-const alunoController  = new AlunoController(useCaseAddAluno, useCaseLerAluno)
+const useCaseUpdateAluno = new UpdateAlunoUseCase(repository)
+
+const alunoController  = new AlunoController(useCaseAddAluno, useCaseUpdateAluno, useCaseLerAluno)
 
 
 

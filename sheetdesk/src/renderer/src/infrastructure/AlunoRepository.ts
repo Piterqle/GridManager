@@ -22,7 +22,7 @@ class AlunoRepository
         }
     }
 
-    async editar(Aluno: Aluno): Promise<void> {
+    async update(Aluno: Aluno): Promise<void> {
         try {
             return await window.api.editDB(Aluno)
         }
