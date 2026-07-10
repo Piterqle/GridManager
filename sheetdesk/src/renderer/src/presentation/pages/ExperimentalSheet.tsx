@@ -11,7 +11,7 @@ import { BsThreeDotsVertical, BsTelephone } from "react-icons/bs";
 // Importing Container Controller
 import {alunoController} from "@renderer/shared/container";
 
-function ExperimentalSheet(): React.JSX.Element {
+function ExperimentalSheet({fetchAlunos, alunosDados, setAlunosDados}){
     
     enum alunoStatus {
         Matriculado = "bg-green-100 text-green-800",
@@ -23,8 +23,6 @@ function ExperimentalSheet(): React.JSX.Element {
     const [listDropdow, setListDrop] = useState<any[]>([]);
     const [selectedModalidade, setSelectedModalidade] = useState<string>("");
 
-    // Arquvio do Excel armazenado no localStorage
-    const filePath = localStorage.getItem("excelFilePath");
 
     // Estado de carregamento dos dados
     const [loading, setLoading] = useState<boolean>(true);
@@ -34,39 +32,13 @@ function ExperimentalSheet(): React.JSX.Element {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [alunoEdit, setAlunoEdit] = useState<any | null>(null);
 
-    const [alunosDados, setAlunosDados] = useState<any[]>([]);
 
     useEffect(() => {
         const modalidades = ["Ballet", "Castanholas", "Dança do Ventre", "Dança de Salão", "Dança Cigana", "Flamenco", "Forró", "Funk", "Jazz Funk", "Jazz", "Pole", "Rytmus", "Rytmus Sênior", "Samba de Gafieira"];
         setListDrop(modalidades);
     });
     
-    const fetchAlunos = async (modalidade: string) => {
-        setLoading(true);
-        if (!filePath) {
-            console.error("No Excel file path found in localStorage.");
-            return [];
-        }
-
-        if (modalidade.trim() === "" && selectedModalidade) {
-            modalidade = selectedModalidade.toUpperCase();
-        }
-
-        const data = await alunoController.lerDados(modalidade == "All" ? "" : modalidade);
-        setLoading(false);
-        return data;
-    }
-
-    useEffect(() => {
-        fetchAlunos(selectedModalidade).then((data) => {
-            setAlunosDados(data || []);
-        });
-        const alunos = setInterval(async () => {
-            setAlunosDados(await fetchAlunos(selectedModalidade) || []);
-        }, 30000); // Atualiza a cada 1 minutos
-
-        return () => clearInterval(alunos);
-    }, [filePath, selectedModalidade]);
+    
 
 
     const [paginaAtual, setPaginaAtual] = useState(1);
