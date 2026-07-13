@@ -8,10 +8,7 @@ import { FaUserPlus, FaSearch, FaRegClock, FaFilter } from "react-icons/fa";
 import { BsThreeDotsVertical, BsTelephone } from "react-icons/bs";
 
 
-// Importing Container Controller
-import {alunoController} from "@renderer/shared/container";
-
-function ExperimentalSheet({fetchAlunos, alunosDados, setAlunosDados}){
+function ExperimentalSheet({fetchAlunos, alunosDados, setAlunosDados, selectedModalidade, setSelectedModalidade }){
     
     enum alunoStatus {
         Matriculado = "bg-green-100 text-green-800",
@@ -21,11 +18,10 @@ function ExperimentalSheet({fetchAlunos, alunosDados, setAlunosDados}){
     }
     // Estado do dropdown de modalidades
     const [listDropdow, setListDrop] = useState<any[]>([]);
-    const [selectedModalidade, setSelectedModalidade] = useState<string>("");
+
 
 
     // Estado de carregamento dos dados
-    const [loading, setLoading] = useState<boolean>(true);
 
 
     // Manipular os Estado do modal
@@ -141,15 +137,6 @@ function ExperimentalSheet({fetchAlunos, alunosDados, setAlunosDados}){
                         <tbody className="">
 
                             {
-                                (alunosDados.length === 0 && loading) ? (
-                                    <tr>
-                                        <td colSpan={8} className="text-right p-4 px-auto align-middle text-gray-500">
-                                            <div className="flex items-center justify-center w-full">
-                                                <div className="flex items-center justify-center z-40  animate-spin w-10 h-10 rounded-full border-4 border-t-blue-900 border-gray-300 top-1/2 left-1/2 "/>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ) :
                                     
                                 alunosPagina.length === 0 ? (
                                     <tr>
@@ -188,7 +175,7 @@ function ExperimentalSheet({fetchAlunos, alunosDados, setAlunosDados}){
                                                 {aluno.contato}
                                             </td>
                                             <td className="border-b border-gray-300 p-3 truncate overflow-hidden whitespace-nowrap">
-                                                <p className={`px-2 py-1 rounded-md text-[14px] text-center font-medium ${alunoStatus[aluno.status as keyof typeof alunoStatus]}`}>
+                                                <p className={`px-auto py-1 rounded-md text-[14px] text-center font-medium ${alunoStatus[aluno.status as keyof typeof alunoStatus]}`}>
                                                     {aluno.status}
                                                 </p>
                                             </td>

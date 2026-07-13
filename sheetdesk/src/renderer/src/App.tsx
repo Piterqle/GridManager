@@ -5,7 +5,6 @@ import { FaGear } from "react-icons/fa6";
 // Importando as páginas
 import DashboardPage from "./presentation/pages/DashboardPage";
 import ExperimentalSheet from "./presentation/pages/ExperimentalSheet";
-import Configuration from "./presentation/pages/Configuration";
 
 // Importando estilos
 import "./index.css"
@@ -19,22 +18,22 @@ function App(): React.JSX.Element {
   const [screenSelected, setScreenSelected] = React.useState("dashboard");
 
   const fetchAlunos = async (modalidade: string) => {
-      const data = await alunoController.lerDados(modalidade == "All" ? "" : modalidade);
-      return data;
+    const data = await alunoController.lerDados(modalidade == "All" ? "" : modalidade);
+    return data;
   }
-  
+
   const [alunosDados, setAlunosDados] = useState<any[]>([]);
   const [selectedModalidade, setSelectedModalidade] = useState<string>("");
   useEffect(() => {
-      
-      fetchAlunos(selectedModalidade).then((data) => {
-          setAlunosDados(data || []);
-      });
-      const alunos = setInterval(async () => {
-          (await fetchAlunos(selectedModalidade) || []);
-      }, 30000); // Atualiza a cada 1 minutos
-      
-      return () => clearInterval(alunos);
+
+    fetchAlunos(selectedModalidade).then((data) => {
+      setAlunosDados(data || []);
+    });
+    const alunos = setInterval(async () => {
+      (await fetchAlunos(selectedModalidade) || []);
+    }, 30000); // Atualiza a cada 1 minutos
+
+    return () => clearInterval(alunos);
   }, [selectedModalidade]);
 
   useEffect(() => {
@@ -80,9 +79,9 @@ function App(): React.JSX.Element {
             <button className="text-gray-300 hover:bg-gray-600 w-full h-12" onClick={() => handleScreenSelect("spreadsheets")}>
               Tabela Experimental
             </button>
-            <button className="text-gray-300 hover:bg-gray-600 w-full h-12" onClick={() => handleScreenSelect("settings")}>
+            {/* <button className="text-gray-300 hover:bg-gray-600 w-full h-12" onClick={() => handleScreenSelect("settings")}>
               Settings
-            </button>
+            </button>*/ }
           </div>
           <div className="flex flex-row text-center items-center border-t border-gray-600 gap-3 mt-auto h-20 w-full">
             <div className="w-10 h-10 ml-4 rounded-full bg-gray-200 flex items-center justify-center">
@@ -105,9 +104,13 @@ function App(): React.JSX.Element {
           </div>
         </nav>
         <div className="flex w-full h-full px-8">
-          {screenSelected === "dashboard" && <DashboardPage />}
-          {screenSelected === "spreadsheets" && <ExperimentalSheet fetchAlunos={fetchAlunos} alunosDados={alunosDados} setAlunosDados={setAlunosDados} />}
-          {screenSelected === "settings" && <Configuration />}
+          {screenSelected === "dashboard" && <DashboardPage alunosDados={alunosDados} />}
+          {screenSelected === "spreadsheets" && <ExperimentalSheet
+            fetchAlunos={fetchAlunos}
+            alunosDados={alunosDados}
+            setAlunosDados={setAlunosDados}
+            selectedModalidade={selectedModalidade}
+            setSelectedModalidade={setSelectedModalidade} />}
         </div>
       </main>
     </>
