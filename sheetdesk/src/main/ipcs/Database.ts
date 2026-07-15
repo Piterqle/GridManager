@@ -66,6 +66,15 @@ ipcMain.handle("edit-aluno", async (_, Aluno: Aluno) => {
 
 })
 
+ipcMain.handle("login-user", async (_, email: string, senha: string) =>{
+  try {
+    return await Firebase.login(email, senha)
+  } catch (e)
+  {
+    console.log("Erro no Login: " + e)
+  }
+})
+
 const formatDate = (date: string) => {
   const [YYYY, MM, dd] = date.split("-")
 

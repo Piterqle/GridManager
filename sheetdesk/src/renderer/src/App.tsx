@@ -8,13 +8,14 @@ import ExperimentalSheet from "./presentation/pages/ExperimentalSheet";
 
 // Importando estilos
 import "./index.css"
-import { alunoController } from "./shared/container";
+import { alunoController, usuarioController } from "./shared/container";
 
 
 function App(): React.JSX.Element {
 
+  const [isLogged, setLogin] = useState("")
+
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-  const excelFilePath = localStorage.getItem("excelFilePath");
   const [screenSelected, setScreenSelected] = React.useState("dashboard");
 
   const fetchAlunos = async (modalidade: string) => {
@@ -26,6 +27,7 @@ function App(): React.JSX.Element {
   const [selectedModalidade, setSelectedModalidade] = useState<string>("");
   useEffect(() => {
 
+    if (!isLogged) return
     fetchAlunos(selectedModalidade).then((data) => {
       setAlunosDados(data || []);
     });
@@ -36,13 +38,16 @@ function App(): React.JSX.Element {
     return () => clearInterval(alunos);
   }, [selectedModalidade]);
 
-  useEffect(() => {
-    if (excelFilePath) {
-      console.log("Excel file path from localStorage:", excelFilePath);
-    }
-  }, [excelFilePath]);
 
   useEffect(() => {
+    if (!isLogged) return;
+
+    setSelectedModalidade("")
+    setIsSidebarOpen(false)
+  }, [isLogged])
+
+  useEffect(() => {
+    if (!isLogged) return
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Control") {
         setIsSidebarOpen((prev) => !prev);
@@ -60,9 +65,53 @@ function App(): React.JSX.Element {
     setScreenSelected(screen);
   }
 
+  var [formLogin, setFormLogin] = useState({
+    email: "",
+    senha: ""
+  })
+
+  var onLogin = async () => {
+    const res = await usuarioController.LoginUser(formLogin.email, formLogin.senha)
+    
+    console.log(res)
+    return
+  }
+
   return (
     <>
       <main className="flex h-screen w-screen flex-col items-center justify-start relative overflow-hidden bg-white">
+        {
+          
+          !isLogged ?
+            <section className="fixed inset-0 scale-110 rounded-xl bg-tranparent z-30 ">
+              <div className="w-full h-full blur-3xl opacity-50  bg-black" />
+              <div className="flex items-center justify-center w-full h-full absolute top-0 left-0">
+                <div className={`bg-gray-200 p-6 rounded-lg shadow-lg w-[450px] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 transition-all duration-300 ease-in-out`}>
+                  <div className="flex justify-center items-center mb-4">
+                    <h2 className="text-3xl text-center font-bold">Login</h2>
+                  </div>
+                  <form>
+                    <div className="mb-4">
+                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                        Email
+                      </label>
+                      <input type="text" value={formLogin.email} onChange={(e) => {setFormLogin({...formLogin, email: e.target.value})}} id="email" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="senha">
+                        Senha
+                      </label>
+                      <input type="text" value={formLogin.senha} onChange={(e) => {setFormLogin({...formLogin, senha: e.target.value})}} id="senha" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                    </div>
+                    <button type="button" onClick={() => onLogin()} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 mx-auto px-4 rounded">
+                      Entrar
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </section> :
+            <div></div>
+        }
         <header className="top-0 left-0 w-full p-4 border-b border-gray-300 flex items-center gap-4">
           <button className="p-1 rounded-md hover:bg-gray-200 hover:size-7 hover:text-size-5 z-20" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             <GiHamburgerMenu className="text-black size-5" />

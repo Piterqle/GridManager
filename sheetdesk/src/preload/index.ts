@@ -23,6 +23,9 @@ if (process.contextIsolated) {
         },
         editDB: (Aluno: Aluno) => {
           return ipcRenderer.invoke("edit-aluno", Aluno)
+        },
+        login: (email:string, senha: string) => {
+          return ipcRenderer.invoke("login-user", email, senha)
         }
       })
 

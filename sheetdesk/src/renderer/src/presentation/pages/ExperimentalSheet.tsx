@@ -32,7 +32,7 @@ function ExperimentalSheet({fetchAlunos, alunosDados, setAlunosDados, selectedMo
     useEffect(() => {
         const modalidades = ["Ballet", "Castanholas", "Dança do Ventre", "Dança de Salão", "Dança Cigana", "Flamenco", "Forró", "Funk", "Jazz Funk", "Jazz", "Pole", "Rytmus", "Rytmus Sênior", "Samba de Gafieira"];
         setListDrop(modalidades);
-    });
+    }, []);
     
     
 

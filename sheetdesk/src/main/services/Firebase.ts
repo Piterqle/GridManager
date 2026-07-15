@@ -1,5 +1,6 @@
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { getFirestore, collection, Firestore, doc, getDocs, where, WhereFilterOp, setDoc, runTransaction, query, updateDoc } from "firebase/firestore";
+import { Auth, getAuth, signInWithEmailAndPassword } from "@firebase/auth";
 import Aluno from "../../renderer/src/domain/entidades/alunoClass"
 
 
@@ -8,7 +9,7 @@ export class FirebaseService {
     private static app: FirebaseApp | null = null
 
     private db: Firestore
-
+    private auth : Auth
 
     constructor() {
         const firebaseConfig = {
@@ -24,6 +25,13 @@ export class FirebaseService {
         FirebaseService.app = initializeApp(firebaseConfig);
 
         this.db = getFirestore(FirebaseService.app)
+        this.auth = getAuth(FirebaseService.app)
+    }
+    login = async (email: string, senha: string) =>{
+
+        const res = await signInWithEmailAndPassword(this.auth, email, senha)
+
+        return res.user.uid
     }
 
     readAluno = async (filtro: string = "") =>  {

@@ -8,7 +8,7 @@ import './ipcs/Database'
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1280,
+    width: 1290,
     height: 720,
     show: false,
     autoHideMenuBar: true,
