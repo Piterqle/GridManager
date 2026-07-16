@@ -1,8 +1,7 @@
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { getFirestore, collection, Firestore, doc, getDocs, where, WhereFilterOp, setDoc, runTransaction, query, updateDoc } from "firebase/firestore";
-import { Auth, getAuth, signInWithEmailAndPassword } from "@firebase/auth";
+import { Auth, getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "@firebase/auth";
 import Aluno from "../../renderer/src/domain/entidades/alunoClass"
-
 
 
 export class FirebaseService {
@@ -27,11 +26,21 @@ export class FirebaseService {
         this.db = getFirestore(FirebaseService.app)
         this.auth = getAuth(FirebaseService.app)
     }
+
     login = async (email: string, senha: string) =>{
+        await signInWithEmailAndPassword(this.auth, email, senha)
+        
+        return
+    }
 
-        const res = await signInWithEmailAndPassword(this.auth, email, senha)
+    authUser = async (): Promise<boolean> => {
 
-        return res.user.uid
+        return new Promise((resolve) => {
+            const unsubscribe = onAuthStateChanged(this.auth, (user) =>{
+                unsubscribe();
+                resolve(user != null)
+            })
+        })
     }
 
     readAluno = async (filtro: string = "") =>  {

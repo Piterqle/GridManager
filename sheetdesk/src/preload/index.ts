@@ -26,6 +26,9 @@ if (process.contextIsolated) {
         },
         login: (email:string, senha: string) => {
           return ipcRenderer.invoke("login-user", email, senha)
+        },
+        auth: () => {
+          return ipcRenderer.invoke("auth-user")
         }
       })
 

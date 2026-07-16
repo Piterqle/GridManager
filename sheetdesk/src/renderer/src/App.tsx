@@ -13,7 +13,7 @@ import { alunoController, usuarioController } from "./shared/container";
 
 function App(): React.JSX.Element {
 
-  const [isLogged, setLogin] = useState("")
+  const [isLogged, setLogin] = useState(false)
 
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const [screenSelected, setScreenSelected] = React.useState("dashboard");
@@ -21,6 +21,12 @@ function App(): React.JSX.Element {
   const fetchAlunos = async (modalidade: string) => {
     const data = await alunoController.lerDados(modalidade == "All" ? "" : modalidade);
     return data;
+  }
+
+  const verifAuth = async () => {
+    usuarioController.authUser().then((value) => {
+      return value ? setLogin(true) : setLogin(false)
+    })
   }
 
   const [alunosDados, setAlunosDados] = useState<any[]>([]);
@@ -36,15 +42,13 @@ function App(): React.JSX.Element {
     }, 30000); // Atualiza a cada 1 minutos
 
     return () => clearInterval(alunos);
-  }, [selectedModalidade]);
-
+  }, [selectedModalidade, isLogged]);
 
   useEffect(() => {
-    if (!isLogged) return;
-
-    setSelectedModalidade("")
-    setIsSidebarOpen(false)
-  }, [isLogged])
+    usuarioController.authUser().then((value) => {
+      return value ? setLogin(true) : setLogin(false)
+    })
+  }, [])
 
   useEffect(() => {
     if (!isLogged) return
@@ -59,7 +63,7 @@ function App(): React.JSX.Element {
       window.removeEventListener("keydown", handleKeyDown);
     }
 
-  }, []);
+  }, [isLogged]);
 
   const handleScreenSelect = (screen: string) => {
     setScreenSelected(screen);
@@ -71,10 +75,9 @@ function App(): React.JSX.Element {
   })
 
   var onLogin = async () => {
-    const res = await usuarioController.LoginUser(formLogin.email, formLogin.senha)
-    
-    console.log(res)
-    return
+    await usuarioController.LoginUser(formLogin.email, formLogin.senha)
+
+    setLogin(true)
   }
 
   return (

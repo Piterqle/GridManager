@@ -9,7 +9,8 @@ declare global {
       readDB: (modalidade: string) => Promise<Aluno[]>
       addDB: (filePath: string, Aluno: Aluno) => Promise<void>
       editDB: (Aluno: Aluno) => Promise<void>
-      login:(email: string, senha: string) => Promise<string>
+      login:(email: string, senha: string) => Promise<void>
+      auth:() => Promise<boolean>
     }
   }
 }
