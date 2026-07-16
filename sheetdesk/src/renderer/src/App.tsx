@@ -23,12 +23,6 @@ function App(): React.JSX.Element {
     return data;
   }
 
-  const verifAuth = async () => {
-    usuarioController.authUser().then((value) => {
-      return value ? setLogin(true) : setLogin(false)
-    })
-  }
-
   const [alunosDados, setAlunosDados] = useState<any[]>([]);
   const [selectedModalidade, setSelectedModalidade] = useState<string>("");
   useEffect(() => {

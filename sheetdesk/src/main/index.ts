@@ -3,6 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import './ipcs/Database'
+import { updater } from './updater'
 
 
 function createWindow(): void {
@@ -61,6 +62,8 @@ app.whenReady().then(() => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+
+  updater();
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

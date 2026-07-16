@@ -1,5 +1,4 @@
 import { ipcMain, dialog } from "electron";
-import * as xlsx from "xlsx";
 import Aluno from "../../renderer/src/domain/entidades/alunoClass"
 import { FirebaseService } from "../services/Firebase"
 
@@ -20,7 +19,7 @@ ipcMain.handle("open-excel", async () => {
   return result.filePaths[0] || null;
 });
 
-ipcMain.handle("add-aluno", async (_, filePath: string, Aluno: Aluno) => {
+ipcMain.handle("add-aluno", async (_, Aluno: Aluno) => {
   try {
     await Firebase.addAluno(Aluno)
 
