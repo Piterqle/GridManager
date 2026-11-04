@@ -1,8 +1,6 @@
-import Aluno from "@renderer/domain/entities/alunoClass";
-import IAlunoRepository from "@renderer/domain/repositories/IAlunoRepository";
-import { injectable } from "inversify";
+import Aluno from "../domain/entities/alunoClass";
+import IAlunoRepository from "../domain/repositories/IAlunoRepository";
 
-@injectable()
 class AlunoRepository
     implements IAlunoRepository {
 
@@ -10,14 +8,14 @@ class AlunoRepository
         const filePath = localStorage.getItem('excelFilePath')
         if (filePath === "" || filePath === null) { throw new Error("Arquivo não encontrado nao localStorage"); }
 
-        await window.api.addDB(filePath, Aluno)
+        return
 
     }
 
     async ReadAlunos(modalidade: string): Promise<Aluno[]> {
         try {
 
-            return await window.api.readDB(modalidade)
+            return Promise<Aluno[]>
         } catch (e) {
             throw new Error("Usuarios não encontrados: " + e)
         }
@@ -25,7 +23,7 @@ class AlunoRepository
 
     async UpdateAluno(Aluno: Aluno): Promise<void> {
         try {
-            return await window.api.editDB(Aluno)
+            return 
         }
         catch (e) {
             throw new Error("Erro ao editar usuario: " + e)
