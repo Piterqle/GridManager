@@ -1,74 +1,55 @@
-import { ipcMain, dialog } from "electron";
-import * as xlsx from "xlsx";
-import Aluno from "../../renderer/src/domain/entities/alunoClass"
-import { FirebaseService } from "../services/Firebase"
+import { dialog, ipcMain } from "electron";
+import type { Aluno } from "../../shared/Aluno.ts";
+
+const apiBaseUrl = (process.env.GRIDMANAGER_API_URL ?? "http://127.0.0.1:3000/api").replace(/\/+$/, "");
+
+async function requestApi<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(`${apiBaseUrl}${path}`, init);
+  if (!response.ok) {
+    const body = await response.json().catch(() => null) as { error?: string } | null;
+    throw new Error(body?.error ?? `A API retornou HTTP ${response.status}.`);
+  }
+
+  if (response.status === 204) {
+    return undefined as T;
+  }
+  return response.json() as Promise<T>;
+}
 
 
-
-const Firebase = new FirebaseService
-ipcMain.handle("open-excel", async () => {
-  const result = await dialog.showOpenDialog({
-    properties: ["openFile"],
-    filters: [
-      {
-        name: "Excel",
-        extensions: ["xlsx", "xls"],
-      },
-    ],
+ipcMain.handle("add-aluno", async (_event, _filePath: string, aluno: Aluno) => {
+  await requestApi<Aluno>("/aluno", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(aluno)
   });
-
-  return result.filePaths[0] || null;
 });
 
-ipcMain.handle("add-aluno", async (_, filePath: string, Aluno: Aluno) => {
-  try {
-    await Firebase.addAluno(Aluno)
-
-  } catch (e) {
-    console.log("Error to add Aluno" + e)
-    return;
-  }
-})
-
-ipcMain.handle("read-aluno", async (_, modalidade: string = "") => {
-  try {
-    const alunos: Aluno[] = [];
-    
-    const res =  await Firebase.readAluno(modalidade);
-    
-    for(var index in res){
-
-      alunos.push(new Aluno(res[index].id.toString(),
-        res[index].data.Nome, 
-        res[index].data.Modalidade, 
-        formatDate(res[index].data.DataDaProcura), 
-        formatDate(res[index].data.DataDaExperiencia), 
-        res[index].data.Semana,
-        res[index].data.Horario, 
-        res[index].data.Contato, 
-        res[index].data.Status))
-    }
-    
-    return alunos;
-  } catch (error) {
-    console.error("Error reading Excel file:", error);  
-    return [];
-  }
+ipcMain.handle("read-aluno", async (_event, modalidade = "") => {
+  const query = modalidade && modalidade !== "All"
+    ? `?modalidade=${encodeURIComponent(modalidade)}`
+    : "";
+  const alunos = await requestApi<Aluno[]>(`/aluno${query}`);
+  return alunos.map((aluno) => ({
+    ...aluno,
+    data_procura: formatDate(aluno.data_procura),
+    data_experiencia: formatDate(aluno.data_experiencia)
+  }));
 });
 
-ipcMain.handle("edit-aluno", async (_, Aluno: Aluno) => {
-  try {
-      await Firebase.editAluno(Aluno)
-  } catch (e) {
-    console.log("Error to edit Aluno" + e)
-    return;
+ipcMain.handle("edit-aluno", async (_event, aluno: Aluno) => {
+  if (!aluno.id) {
+    throw new Error("O aluno precisa ter um id para ser atualizado.");
   }
 
-})
+  await requestApi<Aluno>(`/aluno/${encodeURIComponent(aluno.id)}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(aluno)
+  });
+});
 
-const formatDate = (date: string) => {
-  const [YYYY, MM, dd] = date.split("-")
-
-  const foramtedDate = `${dd}/${MM}/${YYYY}`
-  return foramtedDate
+function formatDate(date: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+  return match ? `${match[3]}/${match[2]}/${match[1]}` : date;
 }

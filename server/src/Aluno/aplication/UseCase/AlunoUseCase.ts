@@ -5,35 +5,33 @@ class AlunoUseCase {
 
     constructor(private readonly  alunoRepository: IAlunoRepository) { }
     
-
-    async CreateAluno(Nome: string, 
-        modalidade: string, 
-        data_procura: string, 
-        data_experiencia: string, 
-        semena: string, 
-        horario: string, 
-        contato: string, 
-        status: string
-    ) {
-
-        const aluno = 
-            new Aluno("", Nome, modalidade, data_procura, data_experiencia, semena, horario, contato, status)
+    async CreateAluno(dados: Omit<Aluno, "id">): Promise<Aluno> {
+        const aluno = new Aluno(
+            "",
+            dados.nome,
+            dados.modalidade,
+            dados.data_procura,
+            dados.data_experiencia,
+            dados.semana,
+            dados.horario,
+            dados.contato,
+            dados.status
+        );
         return await this.alunoRepository.CreateAluno(aluno);
     }
 
-    async UpdateAluno(
-        Nome: string, 
-        modalidade: string, 
-        data_procura: string, 
-        data_experiencia: string, 
-        semena: string, 
-        horario: string, 
-        contato: string, 
-        status: string
-    ) : Promise<void>  {
-
-        const aluno = 
-            new Aluno("", Nome, modalidade, data_procura, data_experiencia, semena, horario, contato, status)
+    async UpdateAluno(dados: Aluno): Promise<Aluno | null> {
+        const aluno = new Aluno(
+            dados.id,
+            dados.nome,
+            dados.modalidade,
+            dados.data_procura,
+            dados.data_experiencia,
+            dados.semana,
+            dados.horario,
+            dados.contato,
+            dados.status
+        );
         return await this.alunoRepository.UpdateAluno(aluno);
     }
 }

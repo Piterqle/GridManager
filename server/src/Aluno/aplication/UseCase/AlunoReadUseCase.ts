@@ -4,10 +4,7 @@ class LerAlunoUseCase {
     constructor(private readonly _alunoRepository: IAlunoRepository) { }
 
     async execute(modalidade: string) {
-        if (modalidade.trim() !== "") {
-            modalidade = `Modalidade == "${modalidade}"`;
-        }
-        return await this._alunoRepository.ReadAlunos(modalidade);
+        return this._alunoRepository.ReadAlunos(modalidade);
     }
 }
 

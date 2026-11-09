@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 
-import { formatDate } from "@renderer/shared/DependecyServices";
+import { formatDate } from "@renderer/services/DependecyServices";
 
 const listStatus = ['Matriculado', 'Cancelado', 'Pendente', 'Em Andamento']
 
@@ -90,7 +90,7 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
         setForm({ ...form, semana: semana })
 
 
-        alunoController.CreateAluno(form)
+        window.api.addDB(form, Aluno ? Aluno.id : null)
         onClose()
     }
 

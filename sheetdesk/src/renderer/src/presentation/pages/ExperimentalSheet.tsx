@@ -8,8 +8,6 @@ import { FaUserPlus, FaSearch, FaRegClock, FaFilter } from "react-icons/fa";
 import { BsThreeDotsVertical, BsTelephone } from "react-icons/bs";
 
 
-// Importing Container Controller
-import {alunoController} from "@renderer/shared/DependecyServices";
 
 function ExperimentalSheet(): React.JSX.Element {
     
@@ -45,11 +43,9 @@ function ExperimentalSheet(): React.JSX.Element {
     
 
     useEffect(() => {
-        alunoController.ReadAlunos(selectedModalidade, setLoading).then((data) => {
-            setAlunosDados(data || []);
-        });
         const alunos = setInterval(async () => {
-            setAlunosDados(await alunoController.ReadAlunos(selectedModalidade, setLoading) || []);
+            const data = await window.api.readDB(selectedModalidade);
+            setAlunosDados(data || []);
         }, 30000); // Atualiza a cada 1 minutos
 
         return () => clearInterval(alunos);
@@ -74,7 +70,7 @@ function ExperimentalSheet(): React.JSX.Element {
                 <section className="fixed inset-0 scale-110 rounded-xl bg-tranparent z-30 ">
                     <div className="w-full h-full blur-3xl opacity-50  bg-black"/>
                     <div className="flex items-center justify-center w-full h-full absolute top-0 left-0">
-                        <ModalAdicionar open={isModalOpen} onClose={() => {setIsModalOpen(false), alunoController.ReadAlunos(selectedModalidade, setLoading), setAlunoEdit(null)}} Aluno={alunoEdit} modalidades={listDropdow}  />
+                        <ModalAdicionar open={isModalOpen} onClose={() => {setIsModalOpen(false), setAlunoEdit(null)}} Aluno={alunoEdit} modalidades={listDropdow}  />
                     </div>
                 </section> 
             }
@@ -100,8 +96,10 @@ function ExperimentalSheet(): React.JSX.Element {
                         <select className="border h-[40px] w-110 border-gray-300 rounded-md px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 " value={selectedModalidade} onChange={async (e) => {
                             setSelectedModalidade(e.target.value);
                             console.log("Modalidade selecionada:", e.target.value);
-                            await alunoController.ReadAlunos(e.target.value, setLoading).then((data) => { setAlunosDados(data || []) ; }
-                            )
+                            setLoading(true);
+                            const data = await window.api.readDB(e.target.value);
+                            setAlunosDados(data || []);
+                            setLoading(false);
                         }}>
 
                             <option value="All">Todas as modalidades</option>
