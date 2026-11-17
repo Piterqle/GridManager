@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 
 import { formatDate } from "@renderer/services/DependecyServices";
+import { enumStatus } from "@renderer/shared/statusEnum";
+import { FiUserPlus } from "react-icons/fi";
+import { LuUser } from "react-icons/lu";
 
-const listStatus = ['Matriculado', 'Cancelado', 'Pendente', 'Em Andamento']
+const listStatus = ['Matriculado', 'Desistente', 'Realizado', 'Agendado']
 
 function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onClose: () => void; Aluno: any; modalidades: any[] }): React.JSX.Element {
 
@@ -46,6 +49,12 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
                 contato: Aluno.contato,
                 status: Aluno.status
             })
+
+            if (!listStatus.includes(enumStatus[Aluno.status])) {
+                console.log("Status do aluno não encontrado na lista de status:", Aluno.status);
+                const status =  listStatus.splice(Aluno.status, 1)[0]
+                listStatus.unshift(status)
+            }
         }
     }, [Aluno]);
 
@@ -69,8 +78,8 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
     }
 
     const onReady = () => {
-        const pussuirValorVazio = Object.values(form).some(valor => valor.trim() === "")
-        if (pussuirValorVazio) {
+        const valorVazio = Object.values(form).some(valor => typeof valor === "string" && valor.trim() === "")
+        if (valorVazio) {
             alert("Preencha os campos")
             return
         }
@@ -90,30 +99,38 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
         setForm({ ...form, semana: semana })
 
 
-        window.api.addDB(form, Aluno ? Aluno.id : null)
+        Aluno ? window.api.editDB({ ...Aluno, ...form }) : window.api.addDB(form)
         onClose()
     }
 
     return (
 
         <div className={`bg-white p-6 rounded-lg shadow-lg w-[450px] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 transition-all duration-300 ease-in-out ${open ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
-            <div className="flex justify-between items-center mb-4">
-                {Aluno && Aluno.nome ? <h2 className="text-xl font-bold">Editar Aluno</h2> : <h2 className="text-xl font-bold">Adicionar Aluno</h2>}
-                <button onClick={onClose} className="text-gray-700 hover:size-5 hover:text-gray-900">
-                    <IoMdClose className="size-5" />
-                </button>
-            </div>
+            <header className="flex justify-between flex-col mb-4">
+                <nav className="flex items-center text-xs justify-between flex-row w-full">
+                    <div className="flex items-center gap-2 text-blue-800">
+                        <FiUserPlus />
+                        <p className=" font-semibold text-center"> ALUNOS EXPERIMENTAIS</p>
+                    </div>
+                    <button onClick={onClose} className="text-gray-700 hover:size-5 hover:text-gray-900">
+                        <IoMdClose className="size-5" />
+                    </button>
+                </nav>
+                {Aluno && Aluno.nome ? <h2 className="text-xl font-bold">Editar aluno</h2> : <h2 className="text-xl font-bold">Adicionar aluno</h2>}
+            </header>
+            
             <form>
+                <p className="text-sm flex flex-row items-center gap-2 font-semibold mb-3"><span className="text-blue-800"><LuUser /></span> Dados do Aluno</p>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="nome">
-                        Nome Completo
+                    <label className="block text-gray-700 text-xs mb-2" htmlFor="nome">
+                        Nome Completo <span className="text-red-500">*</span>
                     </label>
                     <input type="text" id="nome" value={form.nome} onChange={(e) => { setForm({ ...form, nome: e.target.value }) }} onBlur={inFocus} className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
 
                 <div className="mb-4 w-full flex flex-row">
                     <div className="mb-4 w-full">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="data_procura">
+                        <label className="block text-gray-700 text-xs mb-2" htmlFor="data_procura">
                             Modalidade
                         </label>
                         <select id="data_procura" onChange={(e) => setForm({ ...form, modalidade: e.target.value })} className="shadow-md border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline select " >
@@ -126,10 +143,10 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
                         </select>
                     </div>
                     <div className="mb-4 ml-4 w-full">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dataInicio">
+                        <label className="block text-gray-700 text-xs mb-2" htmlFor="dataInicio">
                             Status
                         </label>
-                        <select id="dataInicio" onChange={(e) => setForm({ ...form, status: e.target.value })} className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline select" >
+                        <select id="dataInicio" onChange={(e) => setForm({ ...form, status: enumStatus[e.target.value] })} className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline select" >
 
                             {
                                 listStatus.map((status, index) => (
@@ -146,13 +163,13 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
 
                 <div className="mb-4 w-full flex flex-row">
                     <div className="mb-4 w-full">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="data_procura">
+                        <label className="block text-gray-700 text-xs mb-2" htmlFor="data_procura">
                             Contato
                         </label>
-                        <input type="text" value={form.contato} onInput={(e) => { formartnumber(e) }} onChange={(e) => setForm({ ...form, contato: e.target.value })} placeholder="(xx) xxxxx-xxxx" id="data_procura" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                        <input type="text" value={form.contato} maxLength={15} onInput={(e) => { formartnumber(e) }} onChange={(e) => setForm({ ...form, contato: e.target.value })} placeholder="(xx) xxxxx-xxxx" id="data_procura" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                     </div>
                     <div className="mb-4 ml-4 w-full">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dataInicio">
+                        <label className="block text-gray-700 text-xs mb-2" htmlFor="dataInicio">
                             Horário
                         </label>
                         <input id="dataInicio" type="time" value={form.horario} onChange={(e) => setForm({ ...form, horario: e.target.value })} className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
@@ -161,13 +178,13 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
 
                 <div className="mb-4 flex flex-row w-full">
                     <div className="mb-4 w-full">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="data_procura">
+                        <label className="block text-gray-700 text-xs mb-2" htmlFor="data_procura">
                             Data da Procura
                         </label>
                         <input type="date" value={form.data_procura} onChange={(e) => setForm({ ...form, data_procura: e.target.value })} id="data_procura" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                     </div>
                     <div className="mb-4 ml-4 w-full">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dataInicio">
+                        <label className="block text-gray-700 text-xs mb-2" htmlFor="dataInicio">
                             Data da Experiencia
                         </label>
                         <input type="date" value={form.data_experiencia} onChange={(e) => setForm({ ...form, data_experiencia: e.target.value })} id="dataInicio" className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
@@ -176,11 +193,11 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
                 <div className="flex justify-end">
                     {
                         Aluno && Aluno.nome ?
-                            <button type="button" onClick={() => onReady()} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            <button type="button" onClick={() => onReady()} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
                                 Salvar
                             </button>
                             :
-                            <button type="button" onClick={() => onReady()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            <button type="button" onClick={() => onReady()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
                                 Adicionar
                             </button>
                     }

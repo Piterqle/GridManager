@@ -20,7 +20,8 @@ function isAlunoDados(body: unknown): body is AlunoDados {
         return false;
     }
 
-    return camposAluno.every((campo) => typeof (body as Record<string, unknown>)[campo] === "string");
+    return camposAluno.every((campo) => typeof (body as Record<string, unknown>)[campo] === "string" || 
+                            (campo === "status" && typeof (body as Record<string, unknown>)[campo] === "number"));
 }
 
 class AlunoController {
@@ -36,7 +37,9 @@ class AlunoController {
     };
 
     AddAluno: RequestHandler = async (req, res) => {
+        console.log("Recebendo dados do aluno:", req.body);
         if (!isAlunoDados(req.body)) {
+            console.error("Dados do aluno inválidos:", req.body);
             res.status(400).json({ error: "Os dados do aluno estão incompletos ou inválidos." });
             return;
         }

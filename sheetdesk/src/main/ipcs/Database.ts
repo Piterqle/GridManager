@@ -1,5 +1,5 @@
-import { dialog, ipcMain } from "electron";
-import type { Aluno } from "../../shared/Aluno.ts";
+import { ipcMain } from "electron";
+import type { Aluno } from "../../renderer/src/shared/Aluno";
 
 const apiBaseUrl = (process.env.GRIDMANAGER_API_URL ?? "http://127.0.0.1:3000/api").replace(/\/+$/, "");
 
@@ -17,7 +17,7 @@ async function requestApi<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 
-ipcMain.handle("add-aluno", async (_event, _filePath: string, aluno: Aluno) => {
+ipcMain.handle("add-aluno", async (_event, aluno: Aluno) => {
   await requestApi<Aluno>("/aluno", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

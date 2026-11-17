@@ -4,26 +4,24 @@ import ModalAdicionar from "@renderer/presentation/components/ModalAdicionar";
 
 
 // Importing icons
-import { FaUserPlus, FaSearch, FaRegClock, FaFilter } from "react-icons/fa";
+import { FaSearch, FaRegClock, FaFilter } from "react-icons/fa";
 import { BsThreeDotsVertical, BsTelephone } from "react-icons/bs";
-
+import { FiUserPlus } from "react-icons/fi";
+import { enumStatus } from "@renderer/shared/statusEnum";
 
 
 function ExperimentalSheet(): React.JSX.Element {
     
     enum alunoStatus {
-        Matriculado = "bg-green-100 text-green-800",
-        Cancelado = "bg-red-100 text-red-800",
-        Pendente = "bg-yellow-100 text-yellow-800",
-        "Em Andamento" = "bg-blue-100 text-blue-800"
+        Matriculado = "bg-green-100 text-green-800 border border-green-800",
+        Desistente = "bg-red-100 text-red-800 border border-red-800",
+        Realizado = "bg-yellow-100 text-yellow-800 border border-yellow-800",
+        Agendado = "bg-blue-100 text-blue-800 border border-blue-800"
     }
 
     // Estado do dropdown de modalidades
     const [listDropdow, setListDrop] = useState<any[]>([]);
     const [selectedModalidade, setSelectedModalidade] = useState<string>("");
-
-    // Arquvio do Excel armazenado no localStorage
-    const filePath = localStorage.getItem("excelFilePath");
 
     // Estado de carregamento dos dados
     const [loading, setLoading] = useState<boolean>(true);
@@ -38,18 +36,27 @@ function ExperimentalSheet(): React.JSX.Element {
     useEffect(() => {
         const modalidades = ["Ballet", "Castanholas", "Dança do Ventre", "Dança de Salão", "Dança Cigana", "Flamenco", "Forró", "Funk", "Jazz Funk", "Jazz", "Pole", "Rytmus", "Rytmus Sênior", "Samba de Gafieira"];
         setListDrop(modalidades);
-    });
+    }, []);
     
     
-
     useEffect(() => {
+        const readData = async () => {
+            setLoading(true);
+            const data = await window.api.readDB(selectedModalidade);
+            setAlunosDados(data || []);
+            setLoading(false);
+        }
+        readData();
+    }, [selectedModalidade])
+
+    /*useEffect(() => {
         const alunos = setInterval(async () => {
             const data = await window.api.readDB(selectedModalidade);
             setAlunosDados(data || []);
         }, 30000); // Atualiza a cada 1 minutos
 
         return () => clearInterval(alunos);
-    }, [filePath, selectedModalidade]);
+    }, [selectedModalidade]);*/
 
 
     const [paginaAtual, setPaginaAtual] = useState(1);
@@ -75,18 +82,18 @@ function ExperimentalSheet(): React.JSX.Element {
                 </section> 
             }
             <section className="flex flex-row w-full h-auto mt-2">
-                <div className="flex flex-col w-auto h-auto border py-2 px-4 border-gray-300 rounded-xl shadow-lg items-start gap-2">
+                <div className="flex flex-col w-auto h-auto py-2 px-4  items-start gap-2">
                     <h1 className="text-3xl font-bold text-gray-700">Alunos Experimentais</h1>
                     <p className="text-gray-500 ">Esta é uma tabela com as informações dos alunos experimentais.</p>
                 </div>
                 <div className="flex items-end gap-2 ml-auto">
-                    <button onClick={() => setIsModalOpen(true)} className="ml-auto px-4 py-2 rounded-md border h-[40px] text-center border-gray-300 bg-gradient-to-r from-pink-400 to-purple-800 text-white hover:from-pink-500 hover:to-purple-900 flex items-center gap-2">
-                        <FaUserPlus className="" />
+                    <button onClick={() => setIsModalOpen(true)} className="ml-auto px-4 py-2 rounded-xl border h-[40px] text-center border-gray-300 bg-gradient-to-r bg-[#C62B7A] text-white flex items-center gap-2">
+                        <FiUserPlus className="" />
                         <p className="text-sm font-medium">Adicionar Aluno</p>
                     </button>
                 </div>
             </section>
-            <section className="flex flex-col p-2  w-full h-auto border bg-gray-100 border-gray-300 rounded-xl mt-2 shadow-xl items-start gap-4">
+            <section className="flex flex-col p-2  w-full h-auto border border-[#c62b7b2a] rounded-xl mt-2  items-start gap-4">
                 <div className="flex flex-row items-start justify-between w-full px-4">
                     <div className="flex items-center gap-2 w-1/3 relative mt-1">
                         <FaSearch className="absolute ml-3 my-2 text-gray-500" />
@@ -194,12 +201,14 @@ function ExperimentalSheet(): React.JSX.Element {
                                                 {aluno.contato}
                                             </td>
                                             <td className="border-b border-gray-300 p-3 truncate overflow-hidden whitespace-nowrap">
-                                                <p className={`px-2 py-1 rounded-md text-[14px] text-center font-medium ${alunoStatus[aluno.status as keyof typeof alunoStatus]}`}>
-                                                    {aluno.status}
-                                                </p>
+                                                <div className={`px-2 py-1 rounded-3xl text-[14px] text-center font-medium ${enumStatus[aluno.status] ? alunoStatus[enumStatus[aluno.status]] : "bg-gray-100 text-gray-800 border border-gray-800"}`}>
+                                                    <p>
+                                                        {enumStatus[aluno.status] ? enumStatus[aluno.status] : "Desconhecido"}
+                                                    </p>    
+                                                </div>
                                             </td>
                                             <td className="border-b border-gray-300 p-3 text-right">
-                                                <button className="hover:underline" onClick={() => {  setAlunoEdit(aluno); setIsModalOpen(true);}}>
+                                                <button className="hover:underline" onClick={() => {setAlunoEdit(aluno); setIsModalOpen(true);}}>
                                                     <BsThreeDotsVertical className="size-4  text-gray-900" />
                                                 </button>
                                             </td>
@@ -211,16 +220,19 @@ function ExperimentalSheet(): React.JSX.Element {
 
                     </table>
                 </div>
-                <div className="flex items-center justify-end gap-2 w-full">
-                    <button className={`px-3 py-1 rounded-md ${paginaAtual === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`} onClick={() => setPaginaAtual(paginaAtual - 1)} disabled={paginaAtual === 1}>
-                        Anterior
-                    </button>
-                    <span className="text-sm text-gray-500">
-                        Página {paginaAtual} de {totalPaginas}
-                    </span>
-                    <button className={`px-3 py-1 rounded-md ${paginaAtual === totalPaginas ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`} onClick={() => setPaginaAtual(paginaAtual + 1)} disabled={paginaAtual === totalPaginas}>
-                        Próxima
-                    </button>
+                <div className="flex items-center justify-between  w-full">
+                    <p className="mx-3">{alunosDados.length} aluno(s)</p>
+                    <div className="flex items-center gap-2">
+                        <button className={`px-3 py-1 rounded-md ${paginaAtual === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`} onClick={() => setPaginaAtual(paginaAtual - 1)} disabled={paginaAtual === 1}>
+                            Anterior
+                        </button>
+                        <span className="text-sm text-gray-500">
+                            Página {paginaAtual} de {totalPaginas}
+                        </span>
+                        <button className={`px-3 py-1 rounded-md ${paginaAtual === totalPaginas || totalPaginas === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`} onClick={() => setPaginaAtual(paginaAtual + 1)} disabled={paginaAtual === totalPaginas || totalPaginas === 0}>
+                            Próxima
+                        </button>
+                    </div>
                 </div>
             </section>
         </article>

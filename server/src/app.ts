@@ -4,6 +4,7 @@ import { database } from "./services/Database";
 
 const app = express();
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "1mb" }));
 
 app.get("/health", async (_req, res) => {

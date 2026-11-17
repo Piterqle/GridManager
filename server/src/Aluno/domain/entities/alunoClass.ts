@@ -1,3 +1,4 @@
+import { alunoStatus } from "../object/alunoStatus";
 
 class Aluno {
     constructor(
@@ -9,15 +10,15 @@ class Aluno {
     public semana: string,
     public horario: string,
     public contato: string,
-    public status: string
+    public status: alunoStatus = alunoStatus.Matriculado
     ) {}
 
     matricular() {
-        this.status = "Matriculado";
+        this.status = alunoStatus.Matriculado;
     }
 
     cancelarMatricula() {
-        this.status = "Cancelado";
+        this.status = alunoStatus.Desistente;
     }
 }
 
