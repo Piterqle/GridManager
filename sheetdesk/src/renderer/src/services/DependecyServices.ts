@@ -5,4 +5,12 @@ const formatDate = (date: string) => {
     return foramtedDate
 }
 
-export { formatDate }
+const formatCalendar = (date: string) => {
+    const [dd, MM, YYYY] = date.split("/")
+
+    const foramtedDate = `${YYYY}-${MM}-${dd}`
+    return foramtedDate
+}
+
+
+export { formatDate, formatCalendar }

@@ -1,5 +1,5 @@
-import Aluno from "../domain/entities/alunoClass";
-import IAlunoRepository from "../domain/repositories/IAlunoRepository";
+import Aluno from "../../Domain/entities/AlunoEntidade/alunoClass";
+import IAlunoRepository from "../../Domain/repositories/Aluno/IAlunoRepository";
 import { database } from "../../services/Database";
 
 class AlunoRepository
@@ -99,7 +99,7 @@ function toAluno(row: AlunoRow): Aluno {
         row.semana,
         row.horario,
         row.contato,
-        row.status
+        row.status as any
     );
 }
 

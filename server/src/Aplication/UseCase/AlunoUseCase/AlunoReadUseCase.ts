@@ -1,4 +1,4 @@
-import IAlunoRepository from "../../domain/repositories/IAlunoRepository";
+import IAlunoRepository from "../../../Domain/repositories/Aluno/IAlunoRepository";
 
 class LerAlunoUseCase {
     constructor(private readonly _alunoRepository: IAlunoRepository) { }

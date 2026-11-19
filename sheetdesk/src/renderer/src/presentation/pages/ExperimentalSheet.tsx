@@ -93,7 +93,7 @@ function ExperimentalSheet(): React.JSX.Element {
                     </button>
                 </div>
             </section>
-            <section className="flex flex-col p-2  w-full h-auto border border-[#c62b7b2a] rounded-xl mt-2  items-start gap-4">
+            <section className="flex flex-col p-2 w-full h-full border border-[#c62b7b2a] rounded-xl mt-2 mb-4  items-start gap-4">
                 <div className="flex flex-row items-start justify-between w-full px-4">
                     <div className="flex items-center gap-2 w-1/3 relative mt-1">
                         <FaSearch className="absolute ml-3 my-2 text-gray-500" />
@@ -122,8 +122,8 @@ function ExperimentalSheet(): React.JSX.Element {
 
                     </div>
                 </div>
-                <div className="rounded-xl  overflow-auto w-full border max-h-[55vh] border-gray-300">
-                    <table className="w-full table-fixed">
+                <div className="rounded-xl  overflow-auto w-full border h-full border-gray-300">
+                    <table className="w-full  table-fixed">
                         <thead className="bg-gray-200 text-sm sticky top-0">
                             <tr>
                                 <th className="w-55 border-b border-gray-400 p-3 text-left">
@@ -155,7 +155,7 @@ function ExperimentalSheet(): React.JSX.Element {
 
                             {
                                 (alunosDados.length === 0 && loading) ? (
-                                    <tr>
+                                    <tr className="h-40">
                                         <td colSpan={8} className="text-right p-4 px-auto align-middle text-gray-500">
                                             <div className="flex items-center justify-center w-full">
                                                 <div className="flex items-center justify-center z-40  animate-spin w-10 h-10 rounded-full border-4 border-t-blue-900 border-gray-300 top-1/2 left-1/2 "/>
@@ -201,10 +201,10 @@ function ExperimentalSheet(): React.JSX.Element {
                                                 {aluno.contato}
                                             </td>
                                             <td className="border-b border-gray-300 p-3 truncate overflow-hidden whitespace-nowrap">
-                                                <div className={`px-2 py-1 rounded-3xl text-[14px] text-center font-medium ${enumStatus[aluno.status] ? alunoStatus[enumStatus[aluno.status]] : "bg-gray-100 text-gray-800 border border-gray-800"}`}>
+                                                <div className={`px-2 py-1 rounded-3xl text-[13.5px] text-center font-medium ${enumStatus[aluno.status] ? enumStatus[aluno.status].toString() : "bg-gray-100 text-gray-800 border border-gray-800"}`}>
                                                     <p>
                                                         {enumStatus[aluno.status] ? enumStatus[aluno.status] : "Desconhecido"}
-                                                    </p>    
+                                                    </p>
                                                 </div>
                                             </td>
                                             <td className="border-b border-gray-300 p-3 text-right">

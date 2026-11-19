@@ -1,6 +1,7 @@
 import type { RequestHandler } from "express";
-import Aluno from "../domain/entities/alunoClass";
+import Aluno from "../../Domain/entities/AlunoEntidade/alunoClass";
 import { alunoReadUseCase, alunoUseCase } from "../../services/DependecyServices";
+import { CreateAlunoDTOType } from "../../Aplication/DTO/AlunoDTO/AlunoDTO";
 
 type AlunoDados = Omit<Aluno, "id">;
 
@@ -38,13 +39,9 @@ class AlunoController {
 
     AddAluno: RequestHandler = async (req, res) => {
         console.log("Recebendo dados do aluno:", req.body);
-        if (!isAlunoDados(req.body)) {
-            console.error("Dados do aluno inválidos:", req.body);
-            res.status(400).json({ error: "Os dados do aluno estão incompletos ou inválidos." });
-            return;
-        }
+        const alunoCreateDTO: CreateAlunoDTOType = req.body;
 
-        const aluno = await alunoUseCase.CreateAluno(req.body);
+        const aluno = await alunoUseCase.CreateAluno(alunoCreateDTO);
         res.status(201).json(aluno);
     };
 

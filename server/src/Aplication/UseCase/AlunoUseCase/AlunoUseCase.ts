@@ -1,5 +1,5 @@
-import Aluno from "../../domain/entities/alunoClass";
-import IAlunoRepository from "../../domain/repositories/IAlunoRepository";
+import Aluno from "../../../Domain/entities/AlunoEntidade/alunoClass";
+import IAlunoRepository from "../../../Domain/repositories/Aluno/IAlunoRepository";
 
 class AlunoUseCase {
 

@@ -1,5 +1,5 @@
 import express from "express";
-import alunoRouter from "./Aluno/presentation/alunoRouter";
+import alunoRouter from "./Presentation/Aluno/alunoRouter";
 import { database } from "./services/Database";
 
 const app = express();

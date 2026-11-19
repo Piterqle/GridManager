@@ -1,4 +1,4 @@
-import { alunoStatus } from "../object/alunoStatus";
+import { alunoStatus } from "../../object/alunoStatus";
 
 class Aluno {
     constructor(
