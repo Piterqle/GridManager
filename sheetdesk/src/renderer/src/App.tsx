@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "reflect-metadata";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaGear } from "react-icons/fa6";
@@ -15,15 +15,29 @@ import "./index.css"
 function App(): React.JSX.Element {
 
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-  const excelFilePath = localStorage.getItem("excelFilePath");
   const [screenSelected, setScreenSelected] = React.useState("dashboard");
 
 
+  const [alunosDados, setAlunosDados] = useState<any[]>([]);
+  const [selectedModalidade, setSelectedModalidade] = useState<string>("");
+
   useEffect(() => {
-    if (excelFilePath) {
-      console.log("Excel file path from localStorage:", excelFilePath);
+    const readData = async () => {
+        const data = await window.api.readDB(selectedModalidade);
+        setAlunosDados(data || []);
     }
-  }, [excelFilePath]);
+    readData();
+  }, [selectedModalidade])
+
+  useEffect(() => {
+    const alunos = setInterval(async () => {
+        const data = await window.api.readDB(selectedModalidade);
+        setAlunosDados(data || []);
+    }, 30000); // Atualiza a cada 1 minutos
+
+    return () => clearInterval(alunos);
+  }, [selectedModalidade]);
+
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -88,7 +102,13 @@ function App(): React.JSX.Element {
         </nav>
         <div className="flex w-full h-full px-8">
           {screenSelected === "dashboard" && <DashboardPage />}
-          {screenSelected === "spreadsheets" && <ExperimentalSheet />}
+          {screenSelected === "spreadsheets" && 
+            <ExperimentalSheet 
+              alunosDados={alunosDados}
+              setAlunosDados={setAlunosDados}
+              selectedModalidade={selectedModalidade} 
+              setSelectedModalidade={setSelectedModalidade} 
+            />}
           {screenSelected === "settings" && <Configuration />}
         </div>
       </main>

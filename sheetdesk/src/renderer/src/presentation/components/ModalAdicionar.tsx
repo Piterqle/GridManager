@@ -75,7 +75,7 @@ function ModalAluno({ open, onClose, Aluno, modalidades }: { open: boolean; onCl
     const onReady = () => {
         const valorVazio = Object.values(form).some(valor => typeof valor === "string" && valor.trim() === "")
         if (valorVazio) {
-            alert("Preencha os campos")
+            
             return
         }
 

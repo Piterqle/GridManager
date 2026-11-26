@@ -42,7 +42,9 @@ class AlunoController {
         const alunoCreateDTO: CreateAlunoDTOType = req.body;
 
         const aluno = await alunoUseCase.CreateAluno(alunoCreateDTO);
-        res.status(201).json(aluno);
+        return res.status(201).json({
+            message: "Aluno criado com sucesso."
+        });
     };
 
     UpdateAluno: RequestHandler = async (req, res) => {
@@ -69,11 +71,14 @@ class AlunoController {
         ));
 
         if (!aluno) {
-            res.status(404).json({ error: "Aluno não encontrado." });
-            return;
+            return res.status(404).json({ 
+                error: "Aluno não encontrado." }
+            );
         }
 
-        res.json(aluno);
+        return res.status(200).json({
+            message: "Aluno editado com sucesso."
+        });
     };
 }
 

@@ -9,19 +9,21 @@ import { BsThreeDotsVertical, BsTelephone } from "react-icons/bs";
 import { FiUserPlus } from "react-icons/fi";
 import { enumStatus } from "@renderer/shared/statusEnum";
 
+interface ExperimentalSheetProps {
+    alunosDados: any[];
+    setAlunosDados: (alunos: any[]) => void;
+    selectedModalidade: string;
+    setSelectedModalidade: (modalidade: string) => void;
+}
 
-function ExperimentalSheet(): React.JSX.Element {
+const ExperimentalSheet = ({
+    alunosDados,
+    setAlunosDados,
+    selectedModalidade, 
+    setSelectedModalidade} : ExperimentalSheetProps): React.JSX.Element => {
     
-    enum alunoStatus {
-        Matriculado = "bg-green-100 text-green-800 border border-green-800",
-        Desistente = "bg-red-100 text-red-800 border border-red-800",
-        Realizado = "bg-yellow-100 text-yellow-800 border border-yellow-800",
-        Agendado = "bg-blue-100 text-blue-800 border border-blue-800"
-    }
-
     // Estado do dropdown de modalidades
     const [listDropdow, setListDrop] = useState<any[]>([]);
-    const [selectedModalidade, setSelectedModalidade] = useState<string>("");
 
     // Estado de carregamento dos dados
     const [loading, setLoading] = useState<boolean>(true);
@@ -31,33 +33,17 @@ function ExperimentalSheet(): React.JSX.Element {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [alunoEdit, setAlunoEdit] = useState<any | null>(null);
 
-    const [alunosDados, setAlunosDados] = useState<any[]>([]);
+  
 
     useEffect(() => {
         const modalidades = ["Ballet", "Castanholas", "Dança do Ventre", "Dança de Salão", "Dança Cigana", "Flamenco", "Forró", "Funk", "Jazz Funk", "Jazz", "Pole", "Rytmus", "Rytmus Sênior", "Samba de Gafieira"];
         setListDrop(modalidades);
     }, []);
     
-    
-    useEffect(() => {
-        const readData = async () => {
-            setLoading(true);
-            const data = await window.api.readDB(selectedModalidade);
-            setAlunosDados(data || []);
-            setLoading(false);
-        }
-        readData();
-    }, [selectedModalidade])
-
-    /*useEffect(() => {
-        const alunos = setInterval(async () => {
-            const data = await window.api.readDB(selectedModalidade);
-            setAlunosDados(data || []);
-        }, 30000); // Atualiza a cada 1 minutos
-
-        return () => clearInterval(alunos);
-    }, [selectedModalidade]);*/
-
+        const refreshAluno = async () => {
+            const data = await window.api.readDB(selectedModalidade)
+        setAlunosDados(data || [])
+    }
 
     const [paginaAtual, setPaginaAtual] = useState(1);
     const intensPaginacao = 20; // Número de itens por página
@@ -77,7 +63,12 @@ function ExperimentalSheet(): React.JSX.Element {
                 <section className="fixed inset-0 scale-110 rounded-xl bg-tranparent z-30 ">
                     <div className="w-full h-full blur-3xl opacity-50  bg-black"/>
                     <div className="flex items-center justify-center w-full h-full absolute top-0 left-0">
-                        <ModalAdicionar open={isModalOpen} onClose={() => {setIsModalOpen(false), setAlunoEdit(null)}} Aluno={alunoEdit} modalidades={listDropdow}  />
+                        <ModalAdicionar 
+                            open={isModalOpen} 
+                            onClose={() => {setIsModalOpen(false), setAlunoEdit(null), refreshAluno}} 
+                            Aluno={alunoEdit} 
+                            modalidades={listDropdow}  
+                        />
                     </div>
                 </section> 
             }

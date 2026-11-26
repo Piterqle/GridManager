@@ -1,9 +1,29 @@
 import Aluno from "../../Domain/entities/AlunoEntidade/alunoClass";
+import { alunoStatus } from "../../Domain/object/alunoStatus";
 import IAlunoRepository from "../../Domain/repositories/Aluno/IAlunoRepository";
 import { database } from "../../services/Database";
 
 class AlunoRepository
     implements IAlunoRepository {
+
+    async ReadAluno(id: string): Promise<Aluno | null> {
+        const query = `SELECT
+            id,
+            nome,
+            modalidade,
+            data_procura,
+            data_experiencia,
+            semana,
+            horario,
+            contato,
+            status
+        FROM alunos 
+        WHERE id = $1`
+
+        const result = await database.query<AlunoRow>(query, [id])
+        
+        return toAluno(result.rows[0])
+    }
 
     async CreateAluno(aluno: Aluno): Promise<Aluno> {
         const result = await database.query<AlunoRow>(
@@ -68,7 +88,7 @@ class AlunoRepository
                 aluno.semana,
                 aluno.horario,
                 aluno.contato,
-                aluno.status
+                alunoStatus[aluno.status]
             ]
         );
 
