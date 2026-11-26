@@ -25,10 +25,14 @@ export const CreateAlunoDTO = AlunoBaseDTO
     })
     .refine((data) => {
         const hoje = new Date();
-        const dataHoje = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}-${String(hoje.getDate()).padStart(2, "0")}`;
+        const dataHoje = [
+            hoje.getFullYear(),
+            String(hoje.getMonth() + 1).padStart(2, "0"),
+            String(hoje.getDate()).padStart(2, "0")
+        ].join("-");
         return data.data_procura <= dataHoje;
-    }, { 
-        message: "Data de procura terá que ser antes da data atual" 
+    }, {
+        message: "Data de procura não pode ser posterior à data atual"
     });
 export type CreateAlunoDTOType = z.infer<typeof AlunoBaseDTO>;
 
